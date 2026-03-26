@@ -363,6 +363,8 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-temporal">Dimension temporal</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tendencia-de-temperaturas-t2m-y-sst">1. Tendencia de Temperaturas (t2m y sst)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comportamiento-de-la-precipitacion-tp">2. Comportamiento de la Precipitación (tp)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-espacial">Dimension Espacial</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-sin-step-instantaneas">Variables sin step (instantáneas)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-acumuladas">Variables acumuladas</a></li>
@@ -738,7 +740,7 @@ tp: 0 valores faltantes
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2030d2bd970&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2d20008ba90&gt;
 </pre></div>
 </div>
 <img alt="_images/ac073e30f5e5f537e1e4e907e58d73e2a8ece8b9a426b9bb8f7cff25db05fcc1.png" src="_images/ac073e30f5e5f537e1e4e907e58d73e2a8ece8b9a426b9bb8f7cff25db05fcc1.png" />
@@ -1120,6 +1122,23 @@ tp float32
 <img alt="_images/4ab09544a1d3a476ed7699db9ec6a98079efe5cce1bdbe8deb71335164f31bdc.png" src="_images/4ab09544a1d3a476ed7699db9ec6a98079efe5cce1bdbe8deb71335164f31bdc.png" />
 </div>
 </div>
+</section>
+<section id="tendencia-de-temperaturas-t2m-y-sst">
+<h2>1. Tendencia de Temperaturas (t2m y sst)<a class="headerlink" href="#tendencia-de-temperaturas-t2m-y-sst" title="Permalink to this heading">#</a></h2>
+<p>Las gráficas de temperatura muestran una correlación casi perfecta entre la atmósfera y el océano, revelando un cambio estructural en el clima:</p>
+<ul class="simple">
+<li><p><strong>Transición de Fase:</strong> Se observa un cambio drástico de un predominio de anomalías negativas (barras azules) en las décadas de los 70 y 80, hacia un dominio absoluto de anomalías positivas (barras rojas) a partir del año 2000.</p></li>
+<li><p><strong>Aceleración Reciente:</strong> La <strong>media móvil de 12 meses</strong> (línea negra) muestra que el periodo 2023-2024 es el más cálido del registro, superando los <span class="math notranslate nohighlight">\(1.0^{\circ}C\)</span> de anomalía.</p></li>
+<li><p><strong>Eventos Cíclicos:</strong> Los picos pronunciados coinciden con años de fuerte influencia de <strong>El Niño</strong> (1998, 2016, 2024).</p></li>
+</ul>
+</section>
+<section id="comportamiento-de-la-precipitacion-tp">
+<h2>2. Comportamiento de la Precipitación (tp)<a class="headerlink" href="#comportamiento-de-la-precipitacion-tp" title="Permalink to this heading">#</a></h2>
+<p>A diferencia de la temperatura, la precipitación presenta una señal mucho más volátil (“ruidosa”):</p>
+<ul class="simple">
+<li><p><strong>Variabilidad Extrema:</strong> No hay una tendencia lineal tan marcada, pero sí una mayor amplitud en las oscilaciones recientes.</p></li>
+<li><p><strong>Relación Hídrica:</strong> Los periodos de mayor temperatura suelen coincidir con picos de precipitación positiva, sugiriendo una intensificación del ciclo hidrológico en años cálidos.</p></li>
+</ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">meses_nombres</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ene&quot;</span><span class="p">,</span><span class="s2">&quot;Feb&quot;</span><span class="p">,</span><span class="s2">&quot;Mar&quot;</span><span class="p">,</span><span class="s2">&quot;Abr&quot;</span><span class="p">,</span><span class="s2">&quot;May&quot;</span><span class="p">,</span><span class="s2">&quot;Jun&quot;</span><span class="p">,</span>
@@ -1528,6 +1547,13 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
 <p>realizamos boxplots a nivel mensual de cada una de las variables</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_ts</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_ts</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">boxplot_mensual</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
     <span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span>
@@ -1583,63 +1609,8 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">41</span><span class="p">],</span> <span class="n">line</span> <span class="mi">2</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="k">for</span> <span class="n">grupo</span><span class="p">,</span> <span class="n">vars_grupo</span> <span class="ow">in</span> <span class="n">grupos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<span class="ne">----&gt; </span><span class="mi">2</span>     <span class="n">boxplots_grupo</span><span class="p">(</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span>         <span class="n">df_ts</span><span class="p">,</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span>         <span class="n">vars_grupo</span><span class="p">,</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span>         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">grupo</span><span class="si">}</span><span class="s2"> - Distribución mensual&quot;</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span>     <span class="p">)</span>
-
-<span class="nn">Cell In[40], line 8,</span> in <span class="ni">boxplots_grupo</span><span class="nt">(df, variables, titulo)</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span>     <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">axes</span><span class="p">]</span>
-<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
-<span class="ne">----&gt; </span><span class="mi">8</span>     <span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span>         <span class="n">x</span><span class="o">=</span><span class="s2">&quot;month&quot;</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">10</span>         <span class="n">y</span><span class="o">=</span><span class="n">var</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span>         <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">12</span>         <span class="n">showfliers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">13</span>         <span class="n">ax</span><span class="o">=</span><span class="n">ax</span>
-<span class="g g-Whitespace">     </span><span class="mi">14</span>     <span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">15</span>     <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">16</span>     <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
-
-<span class="nn">File c:\Users\Hp\miniconda3\envs\ml_venv\lib\site-packages\seaborn\categorical.py:2231,</span> in <span class="ni">boxplot</span><span class="nt">(data, x, y, hue, order, hue_order, orient, color, palette, saturation, width, dodge, fliersize, linewidth, whis, ax, **kwargs)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2224</span> <span class="k">def</span> <span class="nf">boxplot</span><span class="p">(</span>
-<span class="g g-Whitespace">   </span><span class="mi">2225</span>     <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hue_order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">2226</span>     <span class="n">orient</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">saturation</span><span class="o">=</span><span class="mf">.75</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">.8</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">2227</span>     <span class="n">dodge</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fliersize</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">whis</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">2228</span>     <span class="o">**</span><span class="n">kwargs</span>
-<span class="g g-Whitespace">   </span><span class="mi">2229</span> <span class="p">):</span>
-<span class="ne">-&gt; </span><span class="mi">2231</span>     <span class="n">plotter</span> <span class="o">=</span> <span class="n">_BoxPlotter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">hue</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">hue_order</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">2232</span>                           <span class="n">orient</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">palette</span><span class="p">,</span> <span class="n">saturation</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">2233</span>                           <span class="n">width</span><span class="p">,</span> <span class="n">dodge</span><span class="p">,</span> <span class="n">fliersize</span><span class="p">,</span> <span class="n">linewidth</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2235</span>     <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">2236</span>         <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
-
-<span class="nn">File c:\Users\Hp\miniconda3\envs\ml_venv\lib\site-packages\seaborn\categorical.py:785,</span> in <span class="ni">_BoxPlotter.__init__</span><span class="nt">(self, x, y, hue, data, order, hue_order, orient, color, palette, saturation, width, dodge, fliersize, linewidth)</span>
-<span class="g g-Whitespace">    </span><span class="mi">781</span> <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">hue</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">hue_order</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">782</span>              <span class="n">orient</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">palette</span><span class="p">,</span> <span class="n">saturation</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">783</span>              <span class="n">width</span><span class="p">,</span> <span class="n">dodge</span><span class="p">,</span> <span class="n">fliersize</span><span class="p">,</span> <span class="n">linewidth</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">785</span>     <span class="bp">self</span><span class="o">.</span><span class="n">establish_variables</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">hue</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">orient</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">hue_order</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">786</span>     <span class="bp">self</span><span class="o">.</span><span class="n">establish_colors</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">palette</span><span class="p">,</span> <span class="n">saturation</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">788</span>     <span class="bp">self</span><span class="o">.</span><span class="n">dodge</span> <span class="o">=</span> <span class="n">dodge</span>
-
-<span class="nn">File c:\Users\Hp\miniconda3\envs\ml_venv\lib\site-packages\seaborn\categorical.py:541,</span> in <span class="ni">_CategoricalPlotter.establish_variables</span><span class="nt">(self, x, y, hue, data, orient, order, hue_order, units)</span>
-<span class="g g-Whitespace">    </span><span class="mi">539</span>     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">540</span>         <span class="n">err</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not interpret input &#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">541</span>         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">543</span> <span class="c1"># Figure out the plotting orientation</span>
-<span class="g g-Whitespace">    </span><span class="mi">544</span> <span class="n">orient</span> <span class="o">=</span> <span class="n">infer_orient</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">545</span>     <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">orient</span><span class="p">,</span> <span class="n">require_numeric</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">require_numeric</span>
-<span class="g g-Whitespace">    </span><span class="mi">546</span> <span class="p">)</span>
-
-<span class="ne">ValueError</span>: Could not interpret input &#39;month&#39;
-</pre></div>
-</div>
-<img alt="_images/3c5dc2cf9fec7d96a9439c54c053247fe6525f75adb1584f1381fe5b2cbf5631.png" src="_images/3c5dc2cf9fec7d96a9439c54c053247fe6525f75adb1584f1381fe5b2cbf5631.png" />
+<img alt="_images/18f31601559f331e4abec111552f7b734ea560aafb4cd0519c6201f9837412a4.png" src="_images/18f31601559f331e4abec111552f7b734ea560aafb4cd0519c6201f9837412a4.png" />
+<img alt="_images/6f92ac7a3c1fa3a714c7f6ec3b4a91010fcf5e7187ee549e6a1ec56fd18ae772.png" src="_images/6f92ac7a3c1fa3a714c7f6ec3b4a91010fcf5e7187ee549e6a1ec56fd18ae772.png" />
 </div>
 </div>
 <p>Podemos observar que la mayoria de las variables tienen un comportamiento bastante similar entre grupos en la mayoria de los meses, y que no parece que se observan outliers o extremos en el dataset, pero esto se debe a que</p>
@@ -1686,7 +1657,7 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
 <h3>Correlaciones<a class="headerlink" href="#correlaciones" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">corr_matrix</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">corr_matrix</span> <span class="o">=</span> <span class="n">df_ts</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">corr_matrix</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;coolwarm&quot;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Correlación&quot;</span><span class="p">)</span>
@@ -1805,6 +1776,8 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-temporal">Dimension temporal</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tendencia-de-temperaturas-t2m-y-sst">1. Tendencia de Temperaturas (t2m y sst)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comportamiento-de-la-precipitacion-tp">2. Comportamiento de la Precipitación (tp)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-espacial">Dimension Espacial</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-sin-step-instantaneas">Variables sin step (instantáneas)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-acumuladas">Variables acumuladas</a></li>
