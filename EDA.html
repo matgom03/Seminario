@@ -363,8 +363,6 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-temporal">Dimension temporal</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tendencia-de-temperaturas-t2m-y-sst">1. Tendencia de Temperaturas (t2m y sst)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comportamiento-de-la-precipitacion-tp">2. Comportamiento de la Precipitación (tp)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-espacial">Dimension Espacial</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-sin-step-instantaneas">Variables sin step (instantáneas)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-acumuladas">Variables acumuladas</a></li>
@@ -1122,22 +1120,22 @@ tp float32
 <img alt="_images/4ab09544a1d3a476ed7699db9ec6a98079efe5cce1bdbe8deb71335164f31bdc.png" src="_images/4ab09544a1d3a476ed7699db9ec6a98079efe5cce1bdbe8deb71335164f31bdc.png" />
 </div>
 </div>
-</section>
-<section id="tendencia-de-temperaturas-t2m-y-sst">
-<h2>1. Tendencia de Temperaturas (t2m y sst)<a class="headerlink" href="#tendencia-de-temperaturas-t2m-y-sst" title="Permalink to this heading">#</a></h2>
-<p>Las gráficas de temperatura muestran una correlación casi perfecta entre la atmósfera y el océano, revelando un cambio estructural en el clima:</p>
 <ul class="simple">
+<li><p>Tendencia de Temperaturas (t2m y sst):
+Las gráficas de temperatura muestran una correlación casi perfecta entre la atmósfera y el océano, revelando un cambio estructural en el clima:</p>
+<ul>
 <li><p><strong>Transición de Fase:</strong> Se observa un cambio drástico de un predominio de anomalías negativas (barras azules) en las décadas de los 70 y 80, hacia un dominio absoluto de anomalías positivas (barras rojas) a partir del año 2000.</p></li>
 <li><p><strong>Aceleración Reciente:</strong> La <strong>media móvil de 12 meses</strong> (línea negra) muestra que el periodo 2023-2024 es el más cálido del registro, superando los <span class="math notranslate nohighlight">\(1.0^{\circ}C\)</span> de anomalía.</p></li>
 <li><p><strong>Eventos Cíclicos:</strong> Los picos pronunciados coinciden con años de fuerte influencia de <strong>El Niño</strong> (1998, 2016, 2024).</p></li>
 </ul>
-</section>
-<section id="comportamiento-de-la-precipitacion-tp">
-<h2>2. Comportamiento de la Precipitación (tp)<a class="headerlink" href="#comportamiento-de-la-precipitacion-tp" title="Permalink to this heading">#</a></h2>
-<p>A diferencia de la temperatura, la precipitación presenta una señal mucho más volátil (“ruidosa”):</p>
-<ul class="simple">
+</li>
+<li><p>Comportamiento de la Precipitación (tp):
+A diferencia de la temperatura, la precipitación presenta una señal mucho más volátil (“ruidosa”):</p>
+<ul>
 <li><p><strong>Variabilidad Extrema:</strong> No hay una tendencia lineal tan marcada, pero sí una mayor amplitud en las oscilaciones recientes.</p></li>
 <li><p><strong>Relación Hídrica:</strong> Los periodos de mayor temperatura suelen coincidir con picos de precipitación positiva, sugiriendo una intensificación del ciclo hidrológico en años cálidos.</p></li>
+</ul>
+</li>
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1159,6 +1157,29 @@ tp float32
 <img alt="_images/25af6ac10fe28b8c32af2b2aa42faa44044fd0d6c16165f51efbd7d8565fa328.png" src="_images/25af6ac10fe28b8c32af2b2aa42faa44044fd0d6c16165f51efbd7d8565fa328.png" />
 </div>
 </div>
+<ul class="simple">
+<li><p>Temperatura del Aire (t2m)</p>
+<ul>
+<li><p><strong>Comportamiento Bimodal:</strong> Presenta dos picos de calentamiento, siendo <strong>marzo</strong> el mes más caluroso (<span class="math notranslate nohighlight">\(~298.3 K\)</span>).</p></li>
+<li><p><strong>Mínimo Térmico:</strong> Se observa un enfriamiento marcado que llega a su punto más bajo en <strong>julio</strong>.</p></li>
+<li><p><strong>Variabilidad:</strong> El sombreado (<span class="math notranslate nohighlight">\(\pm1\sigma\)</span>) es constante, lo que sugiere que la temperatura varía de forma similar año tras año.</p></li>
+</ul>
+</li>
+<li><p>Temperatura superficial del mar (sst)</p>
+<ul>
+<li><p><strong>Inercia y Desfase:</strong> El mar alcanza su temperatura máxima en <strong>mayo-junio</strong> (posterior al pico del aire), superando los <span class="math notranslate nohighlight">\(300 K\)</span>.</p></li>
+<li><p><strong>Evento de Enfriamiento:</strong> Existe una caída notable en <strong>julio</strong>, posiblemente asociada a fenómenos de surgencia o cambios en corrientes superficiales.</p></li>
+<li><p><strong>Influencia:</strong> Los valores altos de SST coinciden con el inicio de la temporada de lluvias, actuando como fuente de energía y humedad.</p></li>
+</ul>
+</li>
+<li><p>Precipitación Total (tp)</p>
+<ul>
+<li><p><strong>Temporada de Lluvias:</strong> El ciclo es claramente estacional. Las lluvias aumentan drásticamente en abril hasta alcanzar su <strong>máximo en mayo</strong>.</p></li>
+<li><p><strong>La Canícula (Veranillo):</strong> Se observa una disminución relativa de las lluvias en <strong>agosto</strong>, un fenómeno típico de regiones tropicales.</p></li>
+<li><p><strong>Temporada Seca:</strong> Los niveles más bajos de precipitación ocurren entre <strong>enero y marzo</strong>, coincidiendo con la fase de mayor radiación solar antes del pico térmico.</p></li>
+</ul>
+</li>
+</ul>
 </section>
 <section id="dimension-espacial">
 <h2>Dimension Espacial<a class="headerlink" href="#dimension-espacial" title="Permalink to this heading">#</a></h2>
@@ -1776,8 +1797,6 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-temporal">Dimension temporal</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tendencia-de-temperaturas-t2m-y-sst">1. Tendencia de Temperaturas (t2m y sst)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comportamiento-de-la-precipitacion-tp">2. Comportamiento de la Precipitación (tp)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-espacial">Dimension Espacial</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-sin-step-instantaneas">Variables sin step (instantáneas)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-acumuladas">Variables acumuladas</a></li>
