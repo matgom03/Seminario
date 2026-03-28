@@ -362,10 +362,20 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#validez">3. Validez</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-temporal">Dimension temporal</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-temporal">Dimension temporal</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#series-de-tiempo"><strong>Series de tiempo</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#anomalias-mensuales"><strong>Anomalias mensuales</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ciclo-estacional"><strong>Ciclo estacional</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prueba-de-mann-kendall-y-ciclos-temporales"><strong>Prueba de Mann-Kendall y ciclos temporales</strong></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-espacial">Dimension Espacial</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mapas-climatologicos-por-variable"><strong>Mapas climatologicos por variable</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variabilidad-espacial"><strong>Variabilidad espacial</strong></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-sin-step-instantaneas">Variables sin step (instantáneas)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-acumuladas">Variables acumuladas</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mapa-de-tendencia-espacial"><strong>Mapa de tendencia espacial</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pca-con-eof"><strong>PCA con EOF</strong></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-multivariable">Dimension Multivariable</a><ul class="nav section-nav flex-column">
@@ -398,6 +408,15 @@ document.write(`
 <span class="kn">from</span> <span class="nn">statsmodels.stats.outliers_influence</span> <span class="kn">import</span> <span class="n">variance_inflation_factor</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
 <span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">periodogram</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">shapiro</span><span class="p">,</span> <span class="n">boxcox</span><span class="p">,</span> <span class="n">norm</span>
+<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">periodogram</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tsa.stattools</span> <span class="kn">import</span> <span class="n">adfuller</span><span class="p">,</span> <span class="n">acf</span><span class="p">,</span> <span class="n">pacf</span><span class="p">,</span> <span class="n">ccf</span>
+<span class="kn">from</span> <span class="nn">statsmodels.graphics.tsaplots</span> <span class="kn">import</span> <span class="n">plot_acf</span><span class="p">,</span> <span class="n">plot_pacf</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>                            
+<span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
+<span class="kn">from</span> <span class="nn">pymannkendall</span> <span class="kn">import</span> <span class="n">original_test</span> <span class="k">as</span> <span class="n">mk_test</span>
 </pre></div>
 </div>
 </div>
@@ -738,7 +757,7 @@ tp: 0 valores faltantes
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2d20008ba90&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x21281c6d550&gt;
 </pre></div>
 </div>
 <img alt="_images/ac073e30f5e5f537e1e4e907e58d73e2a8ece8b9a426b9bb8f7cff25db05fcc1.png" src="_images/ac073e30f5e5f537e1e4e907e58d73e2a8ece8b9a426b9bb8f7cff25db05fcc1.png" />
@@ -1061,6 +1080,7 @@ tp float32
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tiempo</span> <span class="o">=</span> <span class="n">df_ts</span><span class="o">.</span><span class="n">index</span>
+<span class="n">df_ts</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_ts</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span>
 <span class="n">todas_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df_ts</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1071,6 +1091,8 @@ tp float32
 <section id="dimension-temporal">
 <h2>Dimension temporal<a class="headerlink" href="#dimension-temporal" title="Permalink to this heading">#</a></h2>
 <p>se realiza el analisis de las variables a nivel temporal, creando graficos temporales como series de tiempo, verificando si se tienen anomalias climaticas y la estacionalidad de las series de cada variable a lo largo del tiempo</p>
+<section id="series-de-tiempo">
+<h3><strong>Series de tiempo</strong><a class="headerlink" href="#series-de-tiempo" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grupos</span> <span class="o">=</span> <span class="p">{</span>
@@ -1110,6 +1132,9 @@ tp float32
 </ul>
 </li>
 </ul>
+</section>
+<section id="anomalias-mensuales">
+<h3><strong>Anomalias mensuales</strong><a class="headerlink" href="#anomalias-mensuales" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_anom</span> <span class="o">=</span> <span class="n">calcular_anomalias</span><span class="p">(</span><span class="n">df_ts</span><span class="p">)</span>
@@ -1146,6 +1171,9 @@ A diferencia de la temperatura, la precipitación presenta una señal mucho más
 </ul>
 </li>
 </ul>
+</section>
+<section id="ciclo-estacional">
+<h3><strong>Ciclo estacional</strong><a class="headerlink" href="#ciclo-estacional" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">meses_nombres</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ene&quot;</span><span class="p">,</span><span class="s2">&quot;Feb&quot;</span><span class="p">,</span><span class="s2">&quot;Mar&quot;</span><span class="p">,</span><span class="s2">&quot;Abr&quot;</span><span class="p">,</span><span class="s2">&quot;May&quot;</span><span class="p">,</span><span class="s2">&quot;Jun&quot;</span><span class="p">,</span>
@@ -1189,6 +1217,155 @@ A diferencia de la temperatura, la precipitación presenta una señal mucho más
 </ul>
 </li>
 </ul>
+<p>Realizamos a sus vez las pruebas estadisticas relacionadas a series de tiempo como Mann-Kendall y el test de estacionareidad ADF, asi como el analisis espectral para determinar los ciclos anuales e interanuales</p>
+</section>
+<section id="prueba-de-mann-kendall-y-ciclos-temporales">
+<h3><strong>Prueba de Mann-Kendall y ciclos temporales</strong><a class="headerlink" href="#prueba-de-mann-kendall-y-ciclos-temporales" title="Permalink to this heading">#</a></h3>
+<p>Realizamos el metodo de Mann-Kendall</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;Variable&#39;</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Trend&#39;</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;p-value&#39;</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Sen slope (u/mes)&#39;</span><span class="si">:</span><span class="s2">&lt;20</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Sen slope (u/dec)&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">df_ts</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">var</span> <span class="o">==</span> <span class="s1">&#39;month&#39;</span><span class="p">:</span>
+        <span class="k">continue</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">mk_test</span><span class="p">(</span><span class="n">df_ts</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">slope_dec</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">slope</span> <span class="o">*</span> <span class="mi">12</span> <span class="o">*</span> <span class="mi">10</span>   <span class="c1"># por década</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">trend</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">p</span><span class="si">:</span><span class="s2">&lt;12.4f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">slope</span><span class="si">:</span><span class="s2">&lt;20.6f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">slope_dec</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Variable   Trend        p-value      Sen slope (u/mes)    Sen slope (u/dec)
+t2m        increasing   0.0000       0.001740             0.2087
+sst        increasing   0.0000       0.001416             0.1699
+msl        increasing   0.0001       0.083015             9.9618
+u10        increasing   0.0386       0.000238             0.0286
+v10        no trend     0.9888       -0.000002            -0.0003
+tp         no trend     0.2382       -0.000000            -0.0000
+ssr        increasing   0.0126       336.483981           40378.0778
+ssrd       increasing   0.0136       374.634515           44956.1418
+strd       increasing   0.0000       283.000150           33960.0180
+slhf       decreasing   0.0000       -415.429658          -49851.5589
+e          decreasing   0.0000       -0.000000            -0.0000
+</pre></div>
+</div>
+</div>
+</div>
+<p>Se aplicó el test no paramétrico de <strong>Mann–Kendall</strong> para evaluar la presencia de tendencias monótonas en las series temporales de las variables climáticas analizadas, junto con la estimación de la <strong>pendiente de Sen</strong> para cuantificar la magnitud del cambio. Este enfoque es robusto frente a valores extremos y no requiere el supuesto de normalidad.</p>
+<ul class="simple">
+<li><p>Temperatura:
+Los resultados muestran una <strong>tendencia creciente estadísticamente significativa</strong> en la temperatura del aire (<strong>t2m</strong>) y en la temperatura superficial del mar (<strong>sst</strong>), con incrementos aproximados de 0.21 y 0.17 unidades por década, respectivamente. Estas señales indican un <strong>calentamiento sostenido del sistema atmósfera–océano</strong> en la región de estudio.</p></li>
+<li><p>Presion y Viento:
+La <strong>presión a nivel del mar (msl)</strong> también presenta una tendencia creciente significativa, lo que sugiere posibles cambios en los patrones de circulación atmosférica regional. De forma similar, la componente zonal del viento (<strong>u10</strong>) muestra una tendencia positiva débil pero estadísticamente significativa, mientras que la componente meridional (<strong>v10</strong>) no evidencia una tendencia detectable.</p></li>
+<li><p>Radiación:
+En cuanto a la <strong>radiación</strong>, las variables <strong>ssr</strong>, <strong>ssrd</strong> y <strong>strd</strong> exhiben tendencias crecientes significativas, lo cual refuerza la señal de aumento en los flujos energéticos hacia la superficie y la atmósfera, potencialmente asociados a cambios en nubosidad o condiciones radiativas.</p></li>
+<li><p>flujo y evaporación:
+Por el contrario, el <strong>flujo de calor latente (slhf)</strong> y la <strong>evaporación (e)</strong> presentan tendencias decrecientes significativas, indicando modificaciones en el intercambio de energía y humedad entre la superficie y la atmósfera. Estas disminuciones pueden estar relacionadas con cambios en la disponibilidad de humedad o en las condiciones termodinámicas superficiales.</p></li>
+<li><p>Precipitación:
+La <strong>precipitación total (tp)</strong> no muestra una tendencia monótona estadísticamente significativa, lo que sugiere estabilidad en los acumulados medios a largo plazo, sin descartar posibles cambios en la variabilidad o en los eventos extremos.</p></li>
+</ul>
+<p>realizamos el analisis de los ciclos anuales e iteranuales</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vars_tp_temp</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;t2m&quot;</span><span class="p">,</span> <span class="s2">&quot;sst&quot;</span><span class="p">,</span> <span class="s2">&quot;tp&quot;</span><span class="p">]</span>  
+<span class="n">vars_tp_temp</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vars_tp_temp</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">df_ts</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vars_tp_temp</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span>
+                         <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">3</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">vars_tp_temp</span><span class="p">)),</span>
+                         <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vars_tp_temp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">axes</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">vars_tp_temp</span><span class="p">):</span>
+    <span class="n">serie</span> <span class="o">=</span> <span class="n">df_ts</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">freqs</span><span class="p">,</span> <span class="n">power</span> <span class="o">=</span> <span class="n">periodogram</span><span class="p">(</span><span class="n">serie</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">freqs</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">periodos</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">freqs</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">periodos</span><span class="p">,</span> <span class="n">power</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;12 m (anual)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span>  <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;6 m (semi-anual)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;purple&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;24 m&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Periodo (meses)&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Periodograma — Temperatura y Precipitación&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/3ed6d95c4e605e31200488885dbe61a44634cd82b9c2a661e2d3455be943b3e3.png" src="_images/3ed6d95c4e605e31200488885dbe61a44634cd82b9c2a661e2d3455be943b3e3.png" />
+</div>
+</div>
+<p>El análisis espectral mediante periodogramas permite identificar las escalas temporales dominantes en la variabilidad de las series climáticas. En este caso, se evaluaron la temperatura del aire (t2m), la temperatura superficial del mar (sst) y la precipitación total (tp).</p>
+<ul>
+<li><p>Temperatura:</p>
+<p>Para <strong>t2m</strong>, el periodograma muestra un <strong>pico dominante alrededor de los 12 meses</strong>, lo que evidencia un ciclo anual claramente definido. También se observa una señal secundaria en torno a los <strong>6 meses</strong>, asociada a un componente semi-anual, aunque de menor intensidad. La potencia disminuye hacia periodos más largos, indicando que la estacionalidad anual domina la variabilidad temporal de la temperatura del aire.</p>
+<p>La <strong>sst</strong> presenta un comportamiento similar, con un <strong>máximo espectral en la escala anual (12 meses)</strong>. Sin embargo, a diferencia de t2m, la potencia relativa en escalas mayores a un año es más persistente, lo que sugiere una <strong>mayor memoria térmica del océano</strong> y una respuesta más lenta a los forzamientos atmosféricos.</p>
+</li>
+<li><p>Precipitacion:</p>
+<p>En contraste, la <strong>precipitación (tp)</strong> no muestra un pico anual claramente dominante. La potencia espectral se encuentra más dispersa entre diferentes periodos, reflejando una <strong>alta variabilidad intra-anual</strong> y un carácter más irregular y episódico. Esto indica que la precipitación no está controlada principalmente por un ciclo periódico simple, sino por procesos dinámicos más complejos.</p>
+</li>
+</ul>
+<p>En conjunto, el periodograma confirma una <strong>estacionalidad fuerte y bien definida en las variables de temperatura</strong>, mientras que la <strong>precipitación presenta un comportamiento espectral más ruidoso y menos periódico</strong>. Estos resultados son consistentes con los análisis de tendencia previos y resaltan la necesidad de enfoques diferenciados para el estudio de la variabilidad y el modelado de estas variables.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── ADF + ACF + PACF ─────────────────────────────────────────────────────────</span>
+<span class="n">target_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vars_tp_temp</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">df_ts</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;Variable&#39;</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;ADF stat&#39;</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;p-value&#39;</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Estacionaria?&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">target_vars</span><span class="p">:</span>
+    <span class="n">serie</span> <span class="o">=</span> <span class="n">df_ts</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="n">adf_result</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="n">serie</span><span class="p">,</span> <span class="n">autolag</span><span class="o">=</span><span class="s1">&#39;AIC&#39;</span><span class="p">)</span>
+    <span class="n">estacionaria</span> <span class="o">=</span> <span class="s2">&quot;SÍ&quot;</span> <span class="k">if</span> <span class="n">adf_result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.05</span> <span class="k">else</span> <span class="s2">&quot;NO&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">adf_result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;12.4f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">adf_result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;10.4f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">estacionaria</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># ── Gráfica ACF + PACF para t2m (variable objetivo) ─────────────────────────</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="n">plot_acf</span><span class="p">(</span><span class="n">df_ts</span><span class="p">[</span><span class="s1">&#39;t2m&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span>  <span class="n">lags</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;ACF — t2m (hasta lag 48 meses)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="n">plot_pacf</span><span class="p">(</span><span class="n">df_ts</span><span class="p">[</span><span class="s1">&#39;t2m&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">lags</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;ywm&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;PACF — t2m (hasta lag 48 meses)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># ── ACF de anomalías para ver persistencia ────────────────────────────────────</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="n">plot_acf</span><span class="p">(</span><span class="n">df_anom</span><span class="p">[</span><span class="s1">&#39;t2m&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span>  <span class="n">lags</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;ACF — anomalías t2m&quot;</span><span class="p">)</span>
+
+<span class="n">plot_acf</span><span class="p">(</span><span class="n">df_anom</span><span class="p">[</span><span class="s1">&#39;sst&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">lags</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;ACF — anomalías sst&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Variable   ADF stat     p-value    Estacionaria?
+--------------------------------------------------
+t2m        -3.4224      0.0102     SÍ
+sst        -4.5233      0.0002     SÍ
+tp         -5.7735      0.0000     SÍ
+</pre></div>
+</div>
+<img alt="_images/5794d5c95efbf8744f6cae7010ef78ced89ebb1521d655b9d42b7d772d81cfad.png" src="_images/5794d5c95efbf8744f6cae7010ef78ced89ebb1521d655b9d42b7d772d81cfad.png" />
+<img alt="_images/613c4b02f15f8ab40cf383488167d044589d47529fdb57cc2298e8b79c90f3f0.png" src="_images/613c4b02f15f8ab40cf383488167d044589d47529fdb57cc2298e8b79c90f3f0.png" />
+</div>
+</div>
+</section>
 </section>
 <section id="dimension-espacial">
 <h2>Dimension Espacial<a class="headerlink" href="#dimension-espacial" title="Permalink to this heading">#</a></h2>
@@ -1198,7 +1375,8 @@ Por tanto, los análisis espaciales representan climatologías
 multianuales de promedios mensuales, y la variabilidad temporal
 refleja cambios interanuales y estacionales combinados, no
 variabilidad de alta frecuencia (diaria u horaria).</p>
-<p><strong>Mapas climatologicos por variable</strong></p>
+<section id="mapas-climatologicos-por-variable">
+<h3><strong>Mapas climatologicos por variable</strong><a class="headerlink" href="#mapas-climatologicos-por-variable" title="Permalink to this heading">#</a></h3>
 <p>Realizamos mapas climatologicos mostrandolos de manera organizada para mayor facilidad de analisis</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1313,7 +1491,9 @@ El flujo de calor latente muestra valores predominantemente negativos, coherente
 <li><p>Evaporación (<code class="docutils literal notranslate"><span class="pre">e</span></code>):
 La climatología de la evaporación presenta patrones espaciales muy similares a los observados en el flujo de calor latente, diferenciándose principalmente por la escala de magnitud. Esta fuerte similitud indica una elevada correlación entre ambas variables, sugiriendo redundancia. Por tanto, no resulta necesario incluir simultáneamente ambas variables en el conjunto de predictores.</p></li>
 </ul>
-<p><strong>Variabilidad espacial</strong></p>
+</section>
+<section id="variabilidad-espacial">
+<h3><strong>Variabilidad espacial</strong><a class="headerlink" href="#variabilidad-espacial" title="Permalink to this heading">#</a></h3>
 <p>se verficia a su vez la variabilidad espacial para verificar donde varian mas las variables a nivel espacial y ver cuales son las zonas mas estables climaticamente</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1350,6 +1530,7 @@ La climatología de la evaporación presenta patrones espaciales muy similares a
 <img alt="_images/39fd1bc89955ffaee1af01f2594c79ebdd5dc9256bfbdebd89769081b4d4be61.png" src="_images/39fd1bc89955ffaee1af01f2594c79ebdd5dc9256bfbdebd89769081b4d4be61.png" />
 </div>
 </div>
+</section>
 <section id="variables-sin-step-instantaneas">
 <h3>Variables sin step (instantáneas)<a class="headerlink" href="#variables-sin-step-instantaneas" title="Permalink to this heading">#</a></h3>
 <p><strong><code class="docutils literal notranslate"><span class="pre">t2m</span></code> — Temperatura a 2 metros</strong><br />
@@ -1413,6 +1594,225 @@ Alta STD en zonas costeras y oceánicas tropicales, especialmente en el Pacífic
 <p><strong><code class="docutils literal notranslate"><span class="pre">e</span></code> — Evaporación</strong><br />
 Patrón muy similar a <code class="docutils literal notranslate"><span class="pre">slhf</span></code>, lo cual es físicamente consistente (variables acopladas). Alta STD en el Pacífico Este tropical refuerza la posible huella de variabilidad interanual (ENSO).</p>
 </section>
+<section id="mapa-de-tendencia-espacial">
+<h3><strong>Mapa de tendencia espacial</strong><a class="headerlink" href="#mapa-de-tendencia-espacial" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lats</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;t2m&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">latitude</span><span class="o">.</span><span class="n">values</span>
+<span class="n">lons</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;t2m&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">longitude</span><span class="o">.</span><span class="n">values</span>
+<span class="n">ntime</span><span class="p">,</span> <span class="n">nlat</span><span class="p">,</span> <span class="n">nlon</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;t2m&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+
+<span class="n">slopes</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">nlat</span><span class="p">,</span> <span class="n">nlon</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+<span class="n">pvalues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">nlat</span><span class="p">,</span> <span class="n">nlon</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">lat</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lats</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">lon</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lons</span><span class="p">):</span>
+        <span class="n">serie</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;t2m&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="n">lon</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">serie</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">mk_test</span><span class="p">(</span><span class="n">serie</span><span class="p">)</span>
+            <span class="n">slopes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>  <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">slope</span> <span class="o">*</span> <span class="mi">12</span> <span class="o">*</span> <span class="mi">10</span>   <span class="c1"># °C/década</span>
+            <span class="n">pvalues</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">p</span>
+
+<span class="c1"># ── Graficar ──────────────────────────────────────────────────────────────────</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+                          <span class="n">subplot_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;projection&#39;</span><span class="p">:</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">()})</span>
+
+<span class="c1"># Mapa de slopes</span>
+<span class="n">im1</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">slopes</span><span class="p">,</span>
+                        <span class="n">levels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">21</span><span class="p">),</span>
+                        <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdBu_r&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">coastlines</span><span class="p">(</span><span class="n">resolution</span><span class="o">=</span><span class="s1">&#39;50m&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">BORDERS</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;°C / década&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Sen&#39;s slope — t2m (°C/década)&quot;</span><span class="p">)</span>
+
+<span class="c1"># Máscara significancia p &lt; 0.05</span>
+<span class="n">sig_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pvalues</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">slopes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+<span class="n">im2</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">sig_mask</span><span class="p">,</span>
+                        <span class="n">levels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">21</span><span class="p">),</span>
+                        <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdBu_r&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">coastlines</span><span class="p">(</span><span class="n">resolution</span><span class="o">=</span><span class="s1">&#39;50m&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">BORDERS</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im2</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;°C / década&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Sen&#39;s slope significativo (p &lt; 0.05)&quot;</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Tendencia espacial de t2m — Mann-Kendall por celda&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/20e59caa9fbefd32ca79c6f6f88b35059f72ea72c2ea03cec7e90332a09899a7.png" src="_images/20e59caa9fbefd32ca79c6f6f88b35059f72ea72c2ea03cec7e90332a09899a7.png" />
+</div>
+</div>
+</section>
+<section id="pca-con-eof">
+<h3><strong>PCA con EOF</strong><a class="headerlink" href="#pca-con-eof" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calcular anomalías mensuales en el campo 3D</span>
+<span class="n">t2m_anom</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;t2m&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;time.month&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;t2m&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;time.month&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+
+<span class="c1"># Reshape: (time, lat*lon)</span>
+<span class="n">ntime</span>  <span class="o">=</span> <span class="n">t2m_anom</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">data2d</span> <span class="o">=</span> <span class="n">t2m_anom</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">ntime</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Eliminar columnas con NaN (tierra en SST, etc.)</span>
+<span class="n">mask_valid</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data2d</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">data_clean</span> <span class="o">=</span> <span class="n">data2d</span><span class="p">[:,</span> <span class="n">mask_valid</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+<span class="n">data_scaled</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data_clean</span><span class="p">)</span>
+
+<span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">pca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">)</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Varianza explicada por cada EOF:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pca</span><span class="o">.</span><span class="n">explained_variance_ratio_</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  EOF</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">v</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%  (acumulado: </span><span class="si">{</span><span class="n">pca</span><span class="o">.</span><span class="n">explained_variance_ratio_</span><span class="p">[:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Varianza explicada por cada EOF:
+  EOF1: 64.8%  (acumulado: 64.8%)
+  EOF2: 9.4%  (acumulado: 74.1%)
+  EOF3: 4.8%  (acumulado: 79.0%)
+  EOF4: 3.9%  (acumulado: 82.9%)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eof1_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+<span class="n">eof1_2d</span><span class="p">[</span><span class="n">mask_valid</span><span class="p">]</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">components_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">eof1_map</span> <span class="o">=</span> <span class="n">eof1_2d</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lats</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">lons</span><span class="p">))</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+                          <span class="n">subplot_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;projection&#39;</span><span class="p">:</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">()})</span>
+<span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+    <span class="n">eof_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="n">eof_2d</span><span class="p">[</span><span class="n">mask_valid</span><span class="p">]</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">components_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+    <span class="n">eof_map</span> <span class="o">=</span> <span class="n">eof_2d</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lats</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">lons</span><span class="p">))</span>
+    
+    <span class="n">im</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">eof_map</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                           <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdBu_r&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
+    <span class="n">axes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">coastlines</span><span class="p">(</span><span class="n">resolution</span><span class="o">=</span><span class="s1">&#39;50m&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">BORDERS</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+    <span class="n">var_exp</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">explained_variance_ratio_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="n">axes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;EOF</span><span class="si">{</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> — </span><span class="si">{</span><span class="n">var_exp</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">% varianza&quot;</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;EOFs espaciales — anomalías t2m&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/1b1cb7011dc513ae0fa6b6cbf879ad340dba20cbe46af99980fd4c3fe3d0cd43.png" src="_images/1b1cb7011dc513ae0fa6b6cbf879ad340dba20cbe46af99980fd4c3fe3d0cd43.png" />
+</div>
+</div>
+<p>Los <strong>EOFs (Empirical Orthogonal Functions)</strong> permiten identificar los principales patrones espaciales de variabilidad de la temperatura a 2 m (t2m), junto con la fracción de varianza que explica cada uno.</p>
+<ul class="simple">
+<li><p>EOF1 — 64.8 % de la varianza</p>
+<ul>
+<li><p>Es el <strong>modo dominante</strong> del sistema.</p></li>
+<li><p>Presenta un patrón espacial <strong>coherente</strong>, con anomalías del mismo signo en la mayor parte del dominio.</p></li>
+<li><p>Representa una <strong>señal de gran escala</strong>, asociada a forzamientos regionales o globales.</p></li>
+<li><p>Puede interpretarse como el <strong>componente principal del calentamiento/enfriamiento generalizado</strong>.</p></li>
+</ul>
+</li>
+<li><p>EOF2 — 9.4 % de la varianza</p>
+<ul>
+<li><p>Muestra un <strong>patrón dipolar</strong>, con regiones que presentan anomalías de signo opuesto.</p></li>
+<li><p>Indica <strong>contrastes espaciales</strong> (por ejemplo, costa–interior o norte–sur).</p></li>
+<li><p>Está asociado a <strong>redistribuciones regionales de temperatura</strong>, posiblemente ligadas a patrones de circulación atmosférica.</p></li>
+</ul>
+</li>
+<li><p>EOF3 — 4.8 % de la varianza</p>
+<ul>
+<li><p>Presenta una estructura más <strong>fragmentada y localizada</strong>.</p></li>
+<li><p>Representa <strong>procesos secundarios</strong>, como efectos orográficos o variabilidad regional.</p></li>
+<li><p>Su interpretación física es <strong>menos robusta</strong> que la de los primeros modos.</p></li>
+</ul>
+</li>
+<li><p>EOF4 — 3.9 % de la varianza</p>
+<ul>
+<li><p>Corresponde a variabilidad de <strong>menor escala espacial</strong>.</p></li>
+<li><p>Puede reflejar señales residuales estacionales o ruido estructurado.</p></li>
+<li><p>Generalmente no se utiliza de forma aislada para conclusiones climáticas.</p></li>
+</ul>
+</li>
+<li><p>Conclusión general</p>
+<ul>
+<li><p>Los dos primeros EOFs explican aproximadamente <strong>74 % de la varianza total</strong>, lo que indica que la variabilidad de t2m está dominada por <strong>pocos patrones espaciales principales</strong>.</p></li>
+<li><p>EOF1 describe la variabilidad térmica de <strong>gran escala</strong>, mientras que EOF2 introduce <strong>contrastes regionales clave</strong>.</p></li>
+<li><p>EOF3 y EOF4 aportan detalle adicional, pero con menor peso interpretativo.</p></li>
+</ul>
+</li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axes</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df_ts</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">scores</span><span class="p">[:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;steelblue&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PC</span><span class="si">{</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Series temporales de componentes principales (PCs)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Tiempo&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/dc8bb368b9146b0e02c53a32247188c2cba3e32a076e508838a25aa83a2a71e3.png" src="_images/dc8bb368b9146b0e02c53a32247188c2cba3e32a076e508838a25aa83a2a71e3.png" />
+</div>
+</div>
+<p>Las <strong>Componentes Principales (PCs)</strong> describen la evolución temporal de los patrones espaciales identificados por los EOFs de las anomalías de t2m. Su análisis permite distinguir entre señales dominantes, variabilidad natural y modos secundarios.</p>
+<ul class="simple">
+<li><p>PC1 — Modo dominante</p>
+<ul>
+<li><p>Presenta las <strong>mayores amplitudes</strong>, coherentes con el alto porcentaje de varianza explicado por el EOF1.</p></li>
+<li><p>Muestra una <strong>variabilidad de baja frecuencia</strong>, con periodos prolongados de valores positivos y negativos.</p></li>
+<li><p>Se observa una <strong>tendencia positiva hacia los años más recientes</strong>, lo que sugiere un fortalecimiento del patrón térmico de gran escala.</p></li>
+<li><p>Indica la presencia de una <strong>señal climática persistente</strong>, asociada a calentamiento/enfriamiento generalizado.</p></li>
+</ul>
+</li>
+<li><p>PC2 — Variabilidad interanual</p>
+<ul>
+<li><p>Oscila alrededor de cero sin una tendencia clara.</p></li>
+<li><p>Exhibe <strong>cambios frecuentes de signo</strong>, característicos de variabilidad interanual o interdecadal.</p></li>
+<li><p>Está asociada a contrastes espaciales del EOF2, posiblemente vinculados a cambios en la circulación atmosférica.</p></li>
+</ul>
+</li>
+<li><p>PC3 — Procesos secundarios</p>
+<ul>
+<li><p>Amplitud moderada, menor que PC1 y PC2.</p></li>
+<li><p>Presenta episodios puntuales de valores extremos, pero sin persistencia temporal marcada.</p></li>
+<li><p>Representa <strong>procesos regionales o locales</strong>, con menor relevancia en la variabilidad total.</p></li>
+</ul>
+</li>
+<li><p>PC4 — Variabilidad residual</p>
+<ul>
+<li><p>Señal más ruidosa y de <strong>menor coherencia temporal</strong>.</p></li>
+<li><p>Oscila rápidamente alrededor de cero.</p></li>
+<li><p>Puede interpretarse como <strong>variabilidad residual</strong> o ruido estructurado.</p></li>
+</ul>
+</li>
+</ul>
+</section>
 </section>
 <section id="dimension-multivariable">
 <h2>Dimension Multivariable<a class="headerlink" href="#dimension-multivariable" title="Permalink to this heading">#</a></h2>
@@ -1455,6 +1855,7 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
       <th>strd</th>
       <th>slhf</th>
       <th>e</th>
+      <th>month</th>
     </tr>
   </thead>
   <tbody>
@@ -1471,6 +1872,7 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
       <td>6.000000e+02</td>
       <td>6.000000e+02</td>
       <td>600.000000</td>
+      <td>600.000000</td>
     </tr>
     <tr>
       <th>mean</th>
@@ -1485,6 +1887,7 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
       <td>1.761379e+07</td>
       <td>-4.188290e+06</td>
       <td>-0.001675</td>
+      <td>6.500000</td>
     </tr>
     <tr>
       <th>std</th>
@@ -1499,6 +1902,7 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
       <td>1.758951e+05</td>
       <td>2.857795e+05</td>
       <td>0.000114</td>
+      <td>3.454933</td>
     </tr>
     <tr>
       <th>min</th>
@@ -1513,6 +1917,7 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
       <td>1.704058e+07</td>
       <td>-4.849683e+06</td>
       <td>-0.001939</td>
+      <td>1.000000</td>
     </tr>
     <tr>
       <th>25%</th>
@@ -1527,6 +1932,7 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
       <td>1.752116e+07</td>
       <td>-4.409025e+06</td>
       <td>-0.001763</td>
+      <td>3.750000</td>
     </tr>
     <tr>
       <th>50%</th>
@@ -1541,6 +1947,7 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
       <td>1.762778e+07</td>
       <td>-4.176876e+06</td>
       <td>-0.001670</td>
+      <td>6.500000</td>
     </tr>
     <tr>
       <th>75%</th>
@@ -1555,6 +1962,7 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
       <td>1.773584e+07</td>
       <td>-3.960422e+06</td>
       <td>-0.001584</td>
+      <td>9.250000</td>
     </tr>
     <tr>
       <th>max</th>
@@ -1569,19 +1977,13 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
       <td>1.813644e+07</td>
       <td>-3.562258e+06</td>
       <td>-0.001424</td>
+      <td>12.000000</td>
     </tr>
   </tbody>
 </table>
 </div></div></div>
 </div>
 <p>realizamos boxplots a nivel mensual de cada una de las variables</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_ts</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_ts</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">month</span>
-</pre></div>
-</div>
-</div>
-</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">boxplot_mensual</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
@@ -1652,35 +2054,59 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_vars</span> <span class="o">=</span> <span class="n">vars_step</span> <span class="o">+</span> <span class="n">vars_no_step</span>
 
 <span class="n">resultados_extremos</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">all_vars</span><span class="p">:</span>
+
+<span class="n">n_vars</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_vars</span><span class="p">)</span>
+<span class="n">ncols</span> <span class="o">=</span> <span class="mi">2</span>                         
+<span class="n">nrows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_vars</span> <span class="o">/</span> <span class="n">ncols</span><span class="p">))</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+    <span class="n">nrows</span><span class="o">=</span><span class="n">nrows</span><span class="p">,</span>
+    <span class="n">ncols</span><span class="o">=</span><span class="n">ncols</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span> <span class="o">*</span> <span class="n">ncols</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">nrows</span><span class="p">),</span>
+    <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>  <span class="c1"># para indexar fácilmente</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_vars</span><span class="p">):</span>
     
+    <span class="c1"># Z-scores en el tiempo</span>
     <span class="n">z_scores</span> <span class="o">=</span> <span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">-</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">))</span> <span class="o">/</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
     
+    <span class="c1"># extremos |Z| &gt; 2</span>
     <span class="n">extremos</span> <span class="o">=</span> <span class="n">z_scores</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">z_scores</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span>
     
+    <span class="c1"># conteo temporal</span>
     <span class="n">resultados_extremos</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">extremos</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
     
-    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-    <span class="n">resultados_extremos</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Frecuencia de Extremos (Z &gt; 2) para: </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="c1"># plot en el subplot correspondiente</span>
+    <span class="n">resultados_extremos</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1"> | Frecuencia de extremos (|Z| &gt; 2)&#39;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+<span class="c1"># Elimina ejes vacíos si sobran</span>
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">axes</span><span class="p">)):</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">delaxes</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/76f10604c46efefda9f62d9e6c1ca39b648988ef66d669df10c77cb8494fad72.png" src="_images/76f10604c46efefda9f62d9e6c1ca39b648988ef66d669df10c77cb8494fad72.png" />
-<img alt="_images/bd164cc039dcaac426a3df0c5eefe49ef2a75a59d5fdcf1a3b4210afb22d9b2a.png" src="_images/bd164cc039dcaac426a3df0c5eefe49ef2a75a59d5fdcf1a3b4210afb22d9b2a.png" />
-<img alt="_images/72584520370b0bc81266b7b748b042c27cd7bdd49b6cad8f4fa72afd2ba6a3d9.png" src="_images/72584520370b0bc81266b7b748b042c27cd7bdd49b6cad8f4fa72afd2ba6a3d9.png" />
-<img alt="_images/3a0b84db29ce013420c0ba4cb3dfda2d7892c59cffd019203281a042cf09a114.png" src="_images/3a0b84db29ce013420c0ba4cb3dfda2d7892c59cffd019203281a042cf09a114.png" />
-<img alt="_images/1b89a77153b829730fc7b7839f43a4208184a1fff0341c961a4f4154a6294f18.png" src="_images/1b89a77153b829730fc7b7839f43a4208184a1fff0341c961a4f4154a6294f18.png" />
-<img alt="_images/6e74606713edf90894b4cf3222505a73c9d15c7f58a88e256c4b18b25bababcd.png" src="_images/6e74606713edf90894b4cf3222505a73c9d15c7f58a88e256c4b18b25bababcd.png" />
-<img alt="_images/f709250f1f52747c9c9c6996a794e2e2b3d60f89fecb4191a430e74d59ef01af.png" src="_images/f709250f1f52747c9c9c6996a794e2e2b3d60f89fecb4191a430e74d59ef01af.png" />
-<img alt="_images/c980be1ad0592885492239b13bd6f65a5f919a092b1e309320721f772803e2d7.png" src="_images/c980be1ad0592885492239b13bd6f65a5f919a092b1e309320721f772803e2d7.png" />
-<img alt="_images/fefffa085c6e85e8c4ce333e7a83c6a0063377920c0b2f860baa6eb311a5b248.png" src="_images/fefffa085c6e85e8c4ce333e7a83c6a0063377920c0b2f860baa6eb311a5b248.png" />
-<img alt="_images/35e4b872b45487d75add99370b25118ce68aafd7c39361eee9f288839731ed5d.png" src="_images/35e4b872b45487d75add99370b25118ce68aafd7c39361eee9f288839731ed5d.png" />
-<img alt="_images/5ae5bb2fdd26e38110c0abe8ff88996629962a8863a6a79059f48d1f1c95bc10.png" src="_images/5ae5bb2fdd26e38110c0abe8ff88996629962a8863a6a79059f48d1f1c95bc10.png" />
+<img alt="_images/59c9468d584b56cc57957660afb4959293de837529c01735c1a6c07aae09ff2c.png" src="_images/59c9468d584b56cc57957660afb4959293de837529c01735c1a6c07aae09ff2c.png" />
 </div>
 </div>
+<ul>
+<li><p>Distribución espacial de los extremos</p>
+<p>Los histogramas muestran la distribución de la <strong>frecuencia de eventos extremos por celda espacial</strong> para cada variable. En general, las distribuciones son unimodales y presentan asimetría positiva, lo que indica que la mayoría del dominio experimenta una frecuencia moderada de extremos, mientras que existen regiones específicas con recurrencia significativamente mayor. Cada variable presenta una firma estadística propia, reflejando diferencias en la naturaleza física de los procesos involucrados.</p>
+<p>Las variables asociadas a radiación (ssr, ssrd, strd) presentan distribuciones más amplias, coherentes con la fuerte variabilidad inducida por la nubosidad y el ciclo estacional. En contraste, los flujos superficiales (slhf, e) muestran distribuciones más concentradas, sugiriendo un control más estable por las condiciones de superficie. La precipitación (tp) exhibe una mayor dispersión, consistente con su carácter episódico e intermitente.</p>
+</li>
+<li><p>Patrones espaciales de recurrencia extrema</p>
+<p>Los mapas de frecuencia de extremos revelan patrones espaciales coherentes y físicamente interpretables. En las variables térmicas (t2m y sst), los extremos se encuentran claramente condicionados por la geografía, observándose contrastes marcados entre regiones continentales y oceánicas. La presión a nivel del mar (msl) presenta gradientes suaves y estructuras de mayor escala, asociadas a la circulación sinóptica.</p>
+<p>Las componentes del viento (u10 y v10) muestran patrones altamente organizados, con bandas y núcleos persistentes que reflejan la dinámica atmosférica regional dominante. La coherencia espacial observada en todas las variables indica que los extremos no corresponden a ruido aleatorio, sino a procesos climáticos recurrentes.</p>
+</li>
+</ul>
 </section>
 <section id="correlaciones">
 <h3>Correlaciones<a class="headerlink" href="#correlaciones" title="Permalink to this heading">#</a></h3>
@@ -1731,6 +2157,67 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
 </li>
 <li><p>Presión a nivel del mar</p>
 <p>La presión a nivel del mar (<code class="docutils literal notranslate"><span class="pre">msl</span></code>) muestra correlaciones moderadas o débiles con la mayoría de las variables, lo que indica que actúa principalmente como una variable moduladora del sistema, más que como un factor dominante de la variabilidad mensual. No obstante, su relación negativa con la temperatura es consistente con la estructura estacional del clima regional.</p>
+</li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vars_modelo</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sst&#39;</span><span class="p">,</span> <span class="s1">&#39;msl&#39;</span><span class="p">,</span> <span class="s1">&#39;u10&#39;</span><span class="p">,</span> <span class="s1">&#39;v10&#39;</span><span class="p">,</span> <span class="s1">&#39;tp&#39;</span><span class="p">,</span> <span class="s1">&#39;slhf&#39;</span><span class="p">,</span> <span class="s1">&#39;ssr&#39;</span><span class="p">,</span> <span class="s1">&#39;strd&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">]</span>
+
+<span class="n">df_vif</span> <span class="o">=</span> <span class="n">df_ts</span><span class="p">[</span><span class="n">vars_modelo</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="n">vif_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">&#39;Variable&#39;</span><span class="p">:</span> <span class="n">vars_modelo</span><span class="p">,</span>
+    <span class="s1">&#39;VIF&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">variance_inflation_factor</span><span class="p">(</span><span class="n">df_vif</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vars_modelo</span><span class="p">))]</span>
+<span class="p">})</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;VIF&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">vif_data</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Regla: VIF &gt; 10 → multicolinealidad severa | VIF &gt; 5 → moderada&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Variable          VIF
+       e 5.648280e+10
+    slhf 3.724788e+09
+     sst 1.278397e+06
+     msl 8.530610e+05
+    strd 6.271728e+04
+     ssr 6.693073e+02
+      tp 1.518049e+02
+     u10 3.344071e+01
+     v10 8.717758e+00
+
+Regla: VIF &gt; 10 → multicolinealidad severa | VIF &gt; 5 → moderada
+</pre></div>
+</div>
+</div>
+</div>
+<p>Podemos observar que los valores de VIF complementan lo que se ha visto antes en la matriz de correlaciones:</p>
+<ul>
+<li><p>Multicolinealidad extrema</p>
+<p>Las variables <strong>e, slhf, sst, msl y strd</strong> presentan valores de VIF <strong>varios órdenes de magnitud mayores que 10</strong>, lo que indica:</p>
+<ul class="simple">
+<li><p>Dependencia lineal <strong>muy fuerte</strong> entre ellas</p></li>
+<li><p>Información altamente <strong>redundante</strong></p></li>
+<li><p>Imposibilidad de interpretar coeficientes en modelos lineales</p></li>
+</ul>
+<p>Estas variables representan procesos <strong>físicamente acoplados</strong> (balance energético, flujos superficie–atmósfera y respuesta sinóptica), por lo que este resultado es <strong>esperado en datasets climáticos</strong> como ERA5.</p>
+</li>
+<li><p>Multicolinealidad severa</p>
+<p>Las variables <strong>ssr, tp y u10</strong> muestran VIF elevados (≫10), indicando que:</p>
+<ul class="simple">
+<li><p>Aportan señal climática relevante</p></li>
+<li><p>Pero <strong>no de forma independiente</strong> respecto a otras variables</p></li>
+</ul>
+<p>Su uso conjunto en modelos lineales sigue siendo problemático.</p>
+</li>
+<li><p>Multicolinealidad moderada</p>
+<p>La variable <strong>v10</strong> presenta un VIF ≈ 9, lo que sugiere:</p>
+<ul class="simple">
+<li><p>Dependencia moderada con el resto de variables</p></li>
+<li><p>Puede incluirse con <strong>precaución</strong> en análisis lineales</p></li>
+</ul>
 </li>
 </ul>
 </section>
@@ -1804,10 +2291,20 @@ Patrón muy similar a <code class="docutils literal notranslate"><span class="pr
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#validez">3. Validez</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-temporal">Dimension temporal</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-temporal">Dimension temporal</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#series-de-tiempo"><strong>Series de tiempo</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#anomalias-mensuales"><strong>Anomalias mensuales</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ciclo-estacional"><strong>Ciclo estacional</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prueba-de-mann-kendall-y-ciclos-temporales"><strong>Prueba de Mann-Kendall y ciclos temporales</strong></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-espacial">Dimension Espacial</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mapas-climatologicos-por-variable"><strong>Mapas climatologicos por variable</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variabilidad-espacial"><strong>Variabilidad espacial</strong></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-sin-step-instantaneas">Variables sin step (instantáneas)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-acumuladas">Variables acumuladas</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mapa-de-tendencia-espacial"><strong>Mapa de tendencia espacial</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pca-con-eof"><strong>PCA con EOF</strong></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-multivariable">Dimension Multivariable</a><ul class="nav section-nav flex-column">
