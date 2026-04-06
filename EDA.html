@@ -380,6 +380,7 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-multivariable">Dimension Multivariable</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-univariado">Analisis univariado</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-normalidad">Analisis Normalidad</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-outliers">Analisis outliers</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#correlaciones">Correlaciones</a></li>
 </ul>
@@ -757,7 +758,7 @@ tp: 0 valores faltantes
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x23b39793700&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x21fa17be670&gt;
 </pre></div>
 </div>
 <img alt="_images/ac073e30f5e5f537e1e4e907e58d73e2a8ece8b9a426b9bb8f7cff25db05fcc1.png" src="_images/ac073e30f5e5f537e1e4e907e58d73e2a8ece8b9a426b9bb8f7cff25db05fcc1.png" />
@@ -1889,7 +1890,7 @@ Aun así, la coincidencia entre tendencias positivas de <strong>t2m y sst</stron
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/c4590d44c159a5d836a662c213901712b6d32292789bccf30215de207c11bdc3.png" src="_images/c4590d44c159a5d836a662c213901712b6d32292789bccf30215de207c11bdc3.png" />
+<img alt="_images/d9c358430236024435f291ec20a7613331668cecaee564b3624a04d3a1855a2b.png" src="_images/d9c358430236024435f291ec20a7613331668cecaee564b3624a04d3a1855a2b.png" />
 </div>
 </div>
 <p>Las <strong>Componentes Principales (PCs)</strong> describen la evolución temporal de los patrones espaciales identificados por los EOFs de las anomalías de t2m. Su análisis permite distinguir entre señales dominantes, variabilidad natural y modos secundarios.</p>
@@ -2158,6 +2159,81 @@ Aun así, la coincidencia entre tendencias positivas de <strong>t2m y sst</stron
 </div>
 </div>
 </section>
+<section id="analisis-normalidad">
+<h3>Analisis Normalidad<a class="headerlink" href="#analisis-normalidad" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vars_analizar</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">df_ts</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="s2">&quot;month&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resultados_normalidad</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">vars_analizar</span><span class="p">:</span>
+    <span class="n">serie</span> <span class="o">=</span> <span class="n">df_ts</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="n">stat_sw</span><span class="p">,</span>  <span class="n">p_sw</span>  <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">shapiro</span><span class="p">(</span><span class="n">serie</span><span class="p">)</span>
+    <span class="n">stat_da</span><span class="p">,</span>  <span class="n">p_da</span>  <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">normaltest</span><span class="p">(</span><span class="n">serie</span><span class="p">)</span>         <span class="c1"># D&#39;Agostino K²</span>
+    <span class="n">stat_ks</span><span class="p">,</span>  <span class="n">p_ks</span>  <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">kstest</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">serie</span> <span class="o">-</span> <span class="n">serie</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">serie</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> <span class="s2">&quot;norm&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">skewness</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">skew</span><span class="p">(</span><span class="n">serie</span><span class="p">)</span>
+    <span class="n">kurtosis</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">kurtosis</span><span class="p">(</span><span class="n">serie</span><span class="p">)</span>   <span class="c1"># exceso de kurtosis (0 = normal)</span>
+
+    <span class="n">resultados_normalidad</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+        <span class="s2">&quot;Variable&quot;</span>        <span class="p">:</span> <span class="n">var</span><span class="p">,</span>
+        <span class="s2">&quot;Shapiro p-value&quot;</span> <span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">p_sw</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+        <span class="s2">&quot;Normal (SW)&quot;</span>     <span class="p">:</span> <span class="s2">&quot;normal&quot;</span> <span class="k">if</span> <span class="n">p_sw</span>  <span class="o">&gt;</span> <span class="mf">0.05</span> <span class="k">else</span> <span class="s2">&quot;no_normal&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;D&#39;Agostino p&quot;</span>    <span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">p_da</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+        <span class="s2">&quot;Normal (DA)&quot;</span>     <span class="p">:</span> <span class="s2">&quot;normal&quot;</span> <span class="k">if</span> <span class="n">p_da</span>  <span class="o">&gt;</span> <span class="mf">0.05</span> <span class="k">else</span> <span class="s2">&quot;no_normal&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;KS p-value&quot;</span>      <span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">p_ks</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+        <span class="s2">&quot;Normal (KS)&quot;</span>     <span class="p">:</span> <span class="s2">&quot;normal&quot;</span> <span class="k">if</span> <span class="n">p_ks</span>  <span class="o">&gt;</span> <span class="mf">0.05</span> <span class="k">else</span> <span class="s2">&quot;no_normal&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Skewness&quot;</span>        <span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">skewness</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="s2">&quot;Kurtosis (exc)&quot;</span>  <span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">kurtosis</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">})</span>
+
+<span class="n">df_normalidad</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">resultados_normalidad</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;Variable&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">70</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RESUMEN — Tests de normalidad (α = 0.05)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">70</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_normalidad</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>======================================================================
+RESUMEN — Tests de normalidad (α = 0.05)
+======================================================================
+          Shapiro p-value Normal (SW)  D&#39;Agostino p Normal (DA)  KS p-value Normal (KS)  Skewness  Kurtosis (exc)
+Variable                                                                                                         
+t2m                0.0002   no_normal        0.0003   no_normal      0.0913      normal     0.386           0.260
+sst                0.6607      normal        0.8114      normal      0.9669      normal    -0.063          -0.010
+msl                0.0000   no_normal        0.0003   no_normal      0.0517      normal     0.319          -0.412
+u10                0.0000   no_normal        0.0000   no_normal      0.1079      normal     0.162          -0.659
+v10                0.0000   no_normal        0.0000   no_normal      0.0000   no_normal    -0.415          -1.221
+tp                 0.0000   no_normal        0.0001   no_normal      0.0146   no_normal    -0.419          -0.312
+ssr                0.0168   no_normal        0.0400   no_normal      0.6761      normal     0.131          -0.371
+ssrd               0.0219   no_normal        0.0546      normal      0.5945      normal     0.116          -0.363
+strd               0.0000   no_normal        0.0000   no_normal      0.0587      normal    -0.417           0.480
+slhf               0.0000   no_normal        0.0000   no_normal      0.0720      normal    -0.123          -0.861
+e                  0.0000   no_normal        0.0000   no_normal      0.0720      normal    -0.123          -0.861
+</pre></div>
+</div>
+</div>
+</div>
+<p>Análisis de la normalidad de las variables</p>
+<ul class="simple">
+<li><p>La tabla de tests de normalidad (α = 0.05) evidencia que <strong>la mayoría de las variables climáticas analizadas no siguen una distribución normal</strong>, especialmente según los tests de <strong>Shapiro–Wilk</strong> y <strong>D’Agostino–Pearson</strong>, los cuales presentan mayor sensibilidad para detectar desviaciones de la normalidad en series temporales extensas.</p></li>
+<li><p>La variable <strong>sst</strong> es la única que cumple el supuesto de normalidad de forma consistente en los tres tests aplicados, además de presentar valores de asimetría y curtosis cercanos a cero, lo que indica una distribución aproximadamente normal. En contraste, variables como <strong>tp</strong> y <strong>v10</strong> rechazan la hipótesis de normalidad en todos los tests, reflejando distribuciones asimétricas y con desviaciones significativas respecto a la normal.</p></li>
+<li><p>El test de <strong>Kolmogorov–Smirnov</strong> tiende a aceptar la normalidad en más variables; sin embargo, este comportamiento es esperable debido a su menor potencia estadística, por lo que no se considera determinante frente a los resultados de Shapiro–Wilk y D’Agostino–Pearson.</p></li>
+<li><p>Los valores de <strong>skewness</strong> y <strong>curtosis</strong> indican que, aunque algunas variables presentan distribuciones visualmente cercanas a la normal, existen desviaciones estadísticas suficientes para rechazar dicho supuesto. Este comportamiento es característico de datasets climáticos, donde pequeñas desviaciones son detectadas en muestras grandes.</p></li>
+</ul>
+<p>En conjunto, estos resultados <strong>justifican el uso de métodos no paramétricos</strong>, como el test de <strong>Mann–Kendall</strong> y la estimación de la <strong>pendiente de Sen</strong>, para el análisis de tendencias, al no cumplirse de manera generalizada el supuesto de normalidad en las series analizadas.</p>
+</section>
 <section id="analisis-outliers">
 <h3>Analisis outliers<a class="headerlink" href="#analisis-outliers" title="Permalink to this heading">#</a></h3>
 <p>realizamos a su vez analisis de outlier, cuantificando los eventos extremos</p>
@@ -2421,6 +2497,7 @@ Regla: VIF &gt; 10 → multicolinealidad severa | VIF &gt; 5 → moderada
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-multivariable">Dimension Multivariable</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-univariado">Analisis univariado</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-normalidad">Analisis Normalidad</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-outliers">Analisis outliers</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#correlaciones">Correlaciones</a></li>
 </ul>
