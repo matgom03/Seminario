@@ -1498,6 +1498,9 @@ La climatología de la evaporación presenta patrones espaciales muy similares a
 <section id="variabilidad-espacial">
 <h3><strong>Variabilidad espacial</strong><a class="headerlink" href="#variabilidad-espacial" title="Permalink to this heading">#</a></h3>
 <p>se verficia a su vez la variabilidad espacial para verificar donde varian mas las variables a nivel espacial y ver cuales son las zonas mas estables climaticamente</p>
+</section>
+<section id="variables-sin-step-instantaneas">
+<h3>Variables sin step (instantáneas)<a class="headerlink" href="#variables-sin-step-instantaneas" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds_std_no_step</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">vars_no_step</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">time_dim</span><span class="p">,</span> <span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1533,9 +1536,6 @@ La climatología de la evaporación presenta patrones espaciales muy similares a
 <img alt="_images/39fd1bc89955ffaee1af01f2594c79ebdd5dc9256bfbdebd89769081b4d4be61.png" src="_images/39fd1bc89955ffaee1af01f2594c79ebdd5dc9256bfbdebd89769081b4d4be61.png" />
 </div>
 </div>
-</section>
-<section id="variables-sin-step-instantaneas">
-<h3>Variables sin step (instantáneas)<a class="headerlink" href="#variables-sin-step-instantaneas" title="Permalink to this heading">#</a></h3>
 <p><strong><code class="docutils literal notranslate"><span class="pre">t2m</span></code> — Temperatura a 2 metros</strong><br />
 La mayor variabilidad (STD ~2°C) se concentra en la zona andina y continental, lo cual es esperable: la orografía introduce fuertes gradientes térmicos. El océano exhibe STD baja, reflejando un comportamiento térmico más estable temporalmente.</p>
 <p><strong><code class="docutils literal notranslate"><span class="pre">sst</span></code> — Temperatura superficial del mar</strong><br />
@@ -1544,6 +1544,9 @@ Alta variabilidad en la costa pacífica colombiana y el norte del Caribe. La zon
 Patrón muy marcado: alta STD sobre tierra (especialmente Andes, &gt;140 Pa) y baja en el Caribe abierto. Esto puede reflejar efectos orográficos y térmicos continentales, pero también puede constituir una <strong>señal espuria</strong> derivada de la reducción de presión al nivel del mar sobre topografía compleja. <em>Se recomienda verificar este comportamiento antes de usar <code class="docutils literal notranslate"><span class="pre">msl</span></code> como predictor en zonas de alta elevación.</em></p>
 <p><strong><code class="docutils literal notranslate"><span class="pre">u10</span></code> / <code class="docutils literal notranslate"><span class="pre">v10</span></code> — Viento a 10 metros</strong><br />
 Ambas componentes muestran alta variabilidad en la costa Pacífica y la franja ITCZ. La baja STD en el Caribe central confirma un régimen de <strong>vientos alisios estable y persistente</strong>. Notably, <code class="docutils literal notranslate"><span class="pre">v10</span></code> (componente meridional) presenta mayor variabilidad que <code class="docutils literal notranslate"><span class="pre">u10</span></code>, consistente con el desplazamiento N-S de la ITCZ a lo largo del año.</p>
+</section>
+<section id="variables-acumuladas">
+<h3>Variables acumuladas<a class="headerlink" href="#variables-acumuladas" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Integrar acumulados</span>
@@ -1583,9 +1586,6 @@ Ambas componentes muestran alta variabilidad en la costa Pacífica y la franja I
 <img alt="_images/5636de79d8f016cba82c876511f7a21176967320c71eab6e5a600deb126c27fd.png" src="_images/5636de79d8f016cba82c876511f7a21176967320c71eab6e5a600deb126c27fd.png" />
 </div>
 </div>
-</section>
-<section id="variables-acumuladas">
-<h3>Variables acumuladas<a class="headerlink" href="#variables-acumuladas" title="Permalink to this heading">#</a></h3>
 <p><strong><code class="docutils literal notranslate"><span class="pre">tp</span></code> — Precipitación total</strong><br />
 STD muy alta y <strong>espacialmente puntual sobre los Andes</strong>, con un patrón pixelado característico de la convección orográfica intensa. La precipitación oceánica es más homogénea. Esta variable requiere tratamiento especial dada su naturaleza intermitente y distribución sesgada.</p>
 <p><strong><code class="docutils literal notranslate"><span class="pre">ssr</span></code> / <code class="docutils literal notranslate"><span class="pre">ssrd</span></code> — Radiación solar neta y descendente</strong><br />
