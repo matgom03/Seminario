@@ -381,7 +381,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-multivariable">Dimension Multivariable</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-univariado">Analisis univariado</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-normalidad">Analisis Normalidad</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-outliers">Analisis outliers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-outliers-o-eventos-extremos">Analisis outliers o eventos extremos</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#correlaciones">Correlaciones</a></li>
 </ul>
 </li>
@@ -758,7 +758,7 @@ tp: 0 valores faltantes
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x21fa17be670&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x1ce9052e6a0&gt;
 </pre></div>
 </div>
 <img alt="_images/ac073e30f5e5f537e1e4e907e58d73e2a8ece8b9a426b9bb8f7cff25db05fcc1.png" src="_images/ac073e30f5e5f537e1e4e907e58d73e2a8ece8b9a426b9bb8f7cff25db05fcc1.png" />
@@ -931,7 +931,9 @@ Valores fuera de rango físico (150K - 350K): 0
 Variable: e
 Min: -0.0003844672755803913
 Max: 7.191924396465765e-06
-Valores extremos (&gt;1 m de agua): 0
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Valores extremos (&gt;1 m de agua): 0
 
 Variable: msl
 Min: 100633.5703125
@@ -1832,7 +1834,7 @@ Aun así, la coincidencia entre tendencias positivas de <strong>t2m y sst</stron
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/cf4e86b3b5dc1e4d43f27fd84e824ddc092e73ec5e08a52686c6742a9e61bf0a.png" src="_images/cf4e86b3b5dc1e4d43f27fd84e824ddc092e73ec5e08a52686c6742a9e61bf0a.png" />
+<img alt="_images/ee9d589ae209f1c4bb975119ed42ebf1982c2009a9f8f5ab689b6cd5be5481ab.png" src="_images/ee9d589ae209f1c4bb975119ed42ebf1982c2009a9f8f5ab689b6cd5be5481ab.png" />
 </div>
 </div>
 <p>Los <strong>EOFs (Empirical Orthogonal Functions)</strong> permiten identificar los principales patrones espaciales de variabilidad de la temperatura a 2 m (t2m), junto con la fracción de varianza que explica cada uno.</p>
@@ -1890,7 +1892,7 @@ Aun así, la coincidencia entre tendencias positivas de <strong>t2m y sst</stron
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/d9c358430236024435f291ec20a7613331668cecaee564b3624a04d3a1855a2b.png" src="_images/d9c358430236024435f291ec20a7613331668cecaee564b3624a04d3a1855a2b.png" />
+<img alt="_images/c0cbfd3d4eb062249f478be4ac0d6a9515e42a6890c1550a6d6889c132ae38e0.png" src="_images/c0cbfd3d4eb062249f478be4ac0d6a9515e42a6890c1550a6d6889c132ae38e0.png" />
 </div>
 </div>
 <p>Las <strong>Componentes Principales (PCs)</strong> describen la evolución temporal de los patrones espaciales identificados por los EOFs de las anomalías de t2m. Su análisis permite distinguir entre señales dominantes, variabilidad natural y modos secundarios.</p>
@@ -2234,17 +2236,39 @@ e                  0.0000   no_normal        0.0000   no_normal      0.0720     
 </ul>
 <p>En conjunto, estos resultados <strong>justifican el uso de métodos no paramétricos</strong>, como el test de <strong>Mann–Kendall</strong> y la estimación de la <strong>pendiente de Sen</strong>, para el análisis de tendencias, al no cumplirse de manera generalizada el supuesto de normalidad en las series analizadas.</p>
 </section>
-<section id="analisis-outliers">
-<h3>Analisis outliers<a class="headerlink" href="#analisis-outliers" title="Permalink to this heading">#</a></h3>
-<p>realizamos a su vez analisis de outlier, cuantificando los eventos extremos</p>
+<section id="analisis-outliers-o-eventos-extremos">
+<h3>Analisis outliers o eventos extremos<a class="headerlink" href="#analisis-outliers-o-eventos-extremos" title="Permalink to this heading">#</a></h3>
+<p>Para variables con distribuciones no normales y para las cuales la
+frecuencia de extremos definida por percentiles resulta poco informativa,
+se empleó un criterio robusto basado en la mediana y la desviación absoluta
+mediana (MAD). Las anomalías robustas se calcularon como:</p>
+<p>Z_rob = 0.6745 · (X − mediana) / MAD</p>
+<p>considerándose eventos extremos aquellos con |Z_rob| &gt; 2.5. Este enfoque
+permite identificar regiones con mayor ocurrencia de eventos extremos sin
+imponer una frecuencia uniforme en el dominio espacial.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_vars</span> <span class="o">=</span> <span class="n">vars_step</span> <span class="o">+</span> <span class="n">vars_no_step</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Variables cuasi-normales → Z-score clásico</span>
+<span class="n">vars_zscore</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;sst&quot;</span><span class="p">,</span> <span class="s2">&quot;t2m&quot;</span><span class="p">,</span> <span class="s2">&quot;msl&quot;</span><span class="p">,</span> <span class="s2">&quot;u10&quot;</span><span class="p">,</span> <span class="s2">&quot;ssr&quot;</span><span class="p">,</span> <span class="s2">&quot;ssrd&quot;</span>
+<span class="p">]</span>
+
+<span class="c1"># Variables no normales → Z-score robusto</span>
+<span class="n">vars_robusto</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;tp&quot;</span><span class="p">,</span> <span class="s2">&quot;v10&quot;</span><span class="p">,</span> <span class="s2">&quot;strd&quot;</span><span class="p">,</span> <span class="s2">&quot;slhf&quot;</span><span class="p">,</span> <span class="s2">&quot;e&quot;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_vars</span> <span class="o">=</span> <span class="n">vars_zscore</span> <span class="o">+</span> <span class="n">vars_robusto</span>
 
 <span class="n">resultados_extremos</span> <span class="o">=</span> <span class="p">{}</span>
 
 <span class="n">n_vars</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_vars</span><span class="p">)</span>
-<span class="n">ncols</span> <span class="o">=</span> <span class="mi">2</span>                         
+<span class="n">ncols</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="n">nrows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_vars</span> <span class="o">/</span> <span class="n">ncols</span><span class="p">))</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
@@ -2254,26 +2278,35 @@ e                  0.0000   no_normal        0.0000   no_normal      0.0720     
     <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 
-<span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>  <span class="c1"># para indexar fácilmente</span>
+<span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_vars</span><span class="p">):</span>
-    
-    <span class="c1"># Z-scores en el tiempo</span>
-    <span class="n">z_scores</span> <span class="o">=</span> <span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">-</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">))</span> <span class="o">/</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
-    
-    <span class="c1"># extremos |Z| &gt; 2</span>
-    <span class="n">extremos</span> <span class="o">=</span> <span class="n">z_scores</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">z_scores</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span>
-    
-    <span class="c1"># conteo temporal</span>
-    <span class="n">resultados_extremos</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">extremos</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
-    
-    <span class="c1"># plot en el subplot correspondiente</span>
-    <span class="n">resultados_extremos</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1"> | Frecuencia de extremos (|Z| &gt; 2)&#39;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 
-<span class="c1"># Elimina ejes vacíos si sobran</span>
+    <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">vars_zscore</span><span class="p">:</span>
+        <span class="c1"># ── Z-score clásico ─────────────────────────────</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">-</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+        <span class="n">extremos</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">metodo</span> <span class="o">=</span> <span class="s2">&quot;|Z| &gt; 2&quot;</span>
+
+    <span class="k">elif</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">vars_robusto</span><span class="p">:</span>
+        <span class="c1"># ── Z_robusto ─────────────────────────────────</span>
+        <span class="n">median</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+        <span class="n">mad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">-</span> <span class="n">median</span><span class="p">)</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+
+        <span class="n">z_rob</span> <span class="o">=</span> <span class="mf">0.6745</span> <span class="o">*</span> <span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">-</span> <span class="n">median</span><span class="p">)</span> <span class="o">/</span> <span class="n">mad</span>
+        <span class="n">extremos</span> <span class="o">=</span> <span class="n">z_rob</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">z_rob</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">2.5</span><span class="p">)</span>
+        <span class="n">metodo</span> <span class="o">=</span> <span class="s2">&quot;|Z| &gt; 2.5&quot;</span>
+
+    <span class="c1"># Conteo temporal</span>
+    <span class="n">resultados_extremos</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">extremos</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Plot</span>
+    <span class="n">resultados_extremos</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2"> | Frecuencia de extremos (</span><span class="si">{</span><span class="n">metodo</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+<span class="c1"># Eliminar ejes vacíos</span>
 <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">axes</span><span class="p">)):</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">delaxes</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
 
@@ -2282,17 +2315,38 @@ e                  0.0000   no_normal        0.0000   no_normal      0.0720     
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/59c9468d584b56cc57957660afb4959293de837529c01735c1a6c07aae09ff2c.png" src="_images/59c9468d584b56cc57957660afb4959293de837529c01735c1a6c07aae09ff2c.png" />
+<img alt="_images/d9f9ffaa6f8dbfeb1a862597238fdef31ee95aa0c3eb0c0e1607191332d5ac5b.png" src="_images/d9f9ffaa6f8dbfeb1a862597238fdef31ee95aa0c3eb0c0e1607191332d5ac5b.png" />
 </div>
 </div>
+<ul class="simple">
+<li><p>Análisis de la frecuencia espacial de eventos extremos</p></li>
+</ul>
+<p>La Figura presenta la distribución espacial de la <strong>frecuencia de eventos extremos</strong> para distintas variables atmosféricas y oceánicas, empleando un criterio adaptativo según la naturaleza estadística de cada variable. Para aquellas con comportamiento cuasi-gaussiano (SST, T2M, MSL, U10, SSR y SSRD) se utilizó el umbral de anomalías estandarizadas clásicas (|Z| &gt; 2), mientras que para variables no normales o con distribuciones asimétricas (TP, V10, STRD, SLHF y E) se aplicó un criterio robusto basado en la mediana y la desviación absoluta mediana (|Z_rob| &gt; 2.5).</p>
+<ul class="simple">
+<li><p>Variables termodinámicas de gran escala</p>
 <ul>
-<li><p>Distribución espacial de los extremos</p>
-<p>Los histogramas muestran la distribución de la <strong>frecuencia de eventos extremos por celda espacial</strong> para cada variable. En general, las distribuciones son unimodales y presentan asimetría positiva, lo que indica que la mayoría del dominio experimenta una frecuencia moderada de extremos, mientras que existen regiones específicas con recurrencia significativamente mayor. Cada variable presenta una firma estadística propia, reflejando diferencias en la naturaleza física de los procesos involucrados.</p>
-<p>Las variables asociadas a radiación (ssr, ssrd, strd) presentan distribuciones más amplias, coherentes con la fuerte variabilidad inducida por la nubosidad y el ciclo estacional. En contraste, los flujos superficiales (slhf, e) muestran distribuciones más concentradas, sugiriendo un control más estable por las condiciones de superficie. La precipitación (tp) exhibe una mayor dispersión, consistente con su carácter episódico e intermitente.</p>
+<li><p><strong>SST</strong> muestra una clara diferenciación espacial, con una mayor frecuencia de eventos extremos concentrada en el sector occidental del dominio, asociada a regiones de mayor variabilidad térmica oceánica. Las áreas centrales presentan frecuencias significativamente menores, indicando un comportamiento más estable.</p></li>
+<li><p><strong>T2M</strong> exhibe un patrón más homogéneo, aunque con máximos relativos en regiones continentales y costeras, reflejando la influencia combinada de forzantes sinópticos y procesos locales.</p></li>
+<li><p><strong>MSL</strong> presenta una estructura espacial coherente, con bandas de mayor frecuencia alineadas con gradientes de presión persistentes, lo que sugiere una modulación por sistemas de circulación de gran escala.</p></li>
+</ul>
 </li>
-<li><p>Patrones espaciales de recurrencia extrema</p>
-<p>Los mapas de frecuencia de extremos revelan patrones espaciales coherentes y físicamente interpretables. En las variables térmicas (t2m y sst), los extremos se encuentran claramente condicionados por la geografía, observándose contrastes marcados entre regiones continentales y oceánicas. La presión a nivel del mar (msl) presenta gradientes suaves y estructuras de mayor escala, asociadas a la circulación sinóptica.</p>
-<p>Las componentes del viento (u10 y v10) muestran patrones altamente organizados, con bandas y núcleos persistentes que reflejan la dinámica atmosférica regional dominante. La coherencia espacial observada en todas las variables indica que los extremos no corresponden a ruido aleatorio, sino a procesos climáticos recurrentes.</p>
+<li><p>Variables dinámicas del viento</p>
+<ul>
+<li><p><strong>U10</strong> revela una marcada heterogeneidad espacial, con regiones bien definidas de alta frecuencia de extremos, asociadas a zonas de mayor actividad del viento zonal y a la influencia de circulaciones regionales.</p></li>
+<li><p><strong>V10</strong>, evaluada mediante un criterio robusto, muestra por primera vez una estructura espacial no homogénea. Se identifican núcleos de alta frecuencia en sectores específicos del dominio, lo que indica regiones con mayor variabilidad del viento meridional y episodios recurrentes de intensificación, evitando la artificial homogeneidad observada al usar percentiles.</p></li>
+</ul>
+</li>
+<li><p>Flujos radiativos y de superficie</p>
+<ul>
+<li><p><strong>SSR</strong> y <strong>SSRD</strong> presentan distribuciones similares, con una mayor concentración de extremos en rangos intermedios de frecuencia y una menor ocurrencia de eventos extremos persistentes, reflejando la naturaleza relativamente estable de los flujos radiativos entrantes.</p></li>
+<li><p><strong>STRD</strong> muestra una distribución asimétrica de frecuencias, con predominio de valores bajos y una cola hacia frecuencias altas, lo que sugiere que los eventos extremos radiativos de onda larga descendente son relativamente poco frecuentes pero intensos en regiones específicas.</p></li>
+</ul>
+</li>
+<li><p>Variables de intercambio superficie–atmósfera</p>
+<ul>
+<li><p><strong>SLHF</strong> y <strong>E</strong> presentan distribuciones altamente sesgadas, con la mayoría del dominio caracterizado por una baja frecuencia de extremos y un número reducido de regiones donde estos eventos ocurren de manera recurrente. Este comportamiento es consistente con la fuerte dependencia de estas variables de condiciones locales de superficie y humedad.</p></li>
+<li><p><strong>TP</strong> exhibe una marcada asimetría, con predominio de bajas frecuencias y pocos píxeles con ocurrencias elevadas, reflejando el carácter intermitente y altamente localizado de los eventos de precipitación intensa.</p></li>
+</ul>
 </li>
 </ul>
 </section>
@@ -2498,7 +2552,7 @@ Regla: VIF &gt; 10 → multicolinealidad severa | VIF &gt; 5 → moderada
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-multivariable">Dimension Multivariable</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-univariado">Analisis univariado</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-normalidad">Analisis Normalidad</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-outliers">Analisis outliers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-outliers-o-eventos-extremos">Analisis outliers o eventos extremos</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#correlaciones">Correlaciones</a></li>
 </ul>
 </li>
