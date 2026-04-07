@@ -1,4 +1,4 @@
-# 🌎 Introducción
+# Introducción
 
 Este **análisis exploratorio de datos (EDA)** se realiza sobre un conjunto de datos climáticos provenientes del **reanálisis ERA5**, desarrollado por el **Copernicus Climate Change Service (C3S)**.
 
