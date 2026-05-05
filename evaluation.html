@@ -1041,6 +1041,7 @@ Climatología         0.0000           0.0000          Alta    -0.8146
 <img alt="_images/ad3025e1ee8b7a6a9276aa2007fecb3ea8c2453166eb6520362052009dcf89eb.png" src="_images/ad3025e1ee8b7a6a9276aa2007fecb3ea8c2453166eb6520362052009dcf89eb.png" />
 </div>
 </div>
+<p>Podemos observar que entre val y test los modelos benchmark entrenados pudieron elevar su ACC entre val y test, LSTM de una manera bastante mas marcada que el resto, por lo que se debe analizar casos de ese estilo</p>
 </section>
 <section id="panel-de-series-temporales">
 <h2>5. Panel de series temporales<a class="headerlink" href="#panel-de-series-temporales" title="Permalink to this heading">#</a></h2>
@@ -1327,6 +1328,39 @@ TCN             DW=0.958  p_norm=0.049  sesgo=-0.0394K  autocorr ALTA
 <img alt="_images/525074da89ce9e64545105c3d76d7efc7ff2719be0023dab24cd3a02cf21d60d.png" src="_images/525074da89ce9e64545105c3d76d7efc7ff2719be0023dab24cd3a02cf21d60d.png" />
 </div>
 </div>
+<p>Estabilidad temporal del ACC — Evaluación en test set</p>
+<p>La figura muestra la evolución del <strong>Anomaly Correlation Coefficient (ACC)</strong> en una ventana rodante de 12 meses para distintos modelos, evaluados sobre el <em>test set</em>. Esta métrica permite analizar no solo el rendimiento promedio, sino también la <strong>consistencia temporal</strong> de cada modelo bajo diferentes condiciones del sistema.</p>
+<p><strong>Comportamiento general</strong></p>
+<ul class="simple">
+<li><p>Se observa una <strong>alta variabilidad temporal</strong> del ACC en todos los modelos, con periodos de buen desempeño (ACC &gt; 0.6) y caídas pronunciadas incluso a valores negativos.</p></li>
+<li><p>El umbral de habilidad (<strong>ACC = 0.6</strong>) sirve como referencia para identificar fases donde los modelos tienen capacidad predictiva útil.</p></li>
+<li><p>Existen <strong>regímenes temporales claros</strong>, donde la mayoría de modelos mejoran o empeoran simultáneamente, sugiriendo cambios estructurales en la dinámica del sistema.</p></li>
+</ul>
+<p><strong>Modelos de Deep Learning</strong></p>
+<ul class="simple">
+<li><p><strong>CNN-LSTM y TCN</strong> muestran un comportamiento relativamente competitivo, con picos de desempeño similares a los mejores benchmarks.</p></li>
+<li><p><strong>LSTM y BiLSTM</strong> presentan trayectorias más suaves, pero tienden a mantenerse ligeramente por debajo de los modelos más complejos.</p></li>
+<li><p>En general, los modelos deep learning capturan bien los periodos favorables, pero también son sensibles a caídas abruptas en fases difíciles.</p></li>
+</ul>
+<p><strong>Benchmarks lineales</strong></p>
+<ul class="simple">
+<li><p><strong>Ridge y Lasso</strong> destacan por alcanzar los valores más altos en algunos periodos, especialmente en fases de alta predictibilidad.</p></li>
+<li><p>Sin embargo, también exhiben <strong>caídas más profundas</strong>, lo que indica menor robustez frente a cambios de régimen.</p></li>
+<li><p>Su comportamiento sugiere que capturan bien relaciones lineales dominantes, pero fallan cuando la dinámica se vuelve más compleja.</p></li>
+</ul>
+<p><strong>Otros modelos</strong></p>
+<ul class="simple">
+<li><p><strong>MLP</strong> muestra una gran variabilidad, con picos altos pero también caídas frecuentes, lo que sugiere inestabilidad en la generalización.</p></li>
+<li><p><strong>Persistence</strong> actúa como baseline, manteniéndose consistentemente por debajo del umbral de habilidad en la mayoría de periodos.</p></li>
+</ul>
+<p><strong>Conclusiones</strong></p>
+<ul class="simple">
+<li><p>No existe un modelo dominante en todo el horizonte temporal; el rendimiento es altamente dependiente del régimen.</p></li>
+<li><p>Los modelos híbridos (<strong>CNN-LSTM, TCN</strong>) ofrecen un mejor balance entre <strong>pico de desempeño y estabilidad</strong>.</p></li>
+<li><p>Los benchmarks lineales siguen siendo competitivos en ciertos periodos, validando su uso como referencia.</p></li>
+<li><p>La variabilidad observada justifica el uso de estrategias más avanzadas como <strong>ensembles o regime-switching</strong>, capaces de adaptarse dinámicamente a las condiciones del sistema.</p></li>
+</ul>
+<p>Este análisis resalta la importancia de evaluar modelos no solo por métricas agregadas, sino también por su comportamiento a lo largo del tiempo.</p>
 </section>
 <section id="analisis-por-subperiodo-climatico-enso">
 <h2>9. Análisis por subperíodo climático (ENSO)<a class="headerlink" href="#analisis-por-subperiodo-climatico-enso" title="Permalink to this heading">#</a></h2>
@@ -1410,6 +1444,38 @@ TCN                        0.194                0.238              -0.309
 </div>
 </div>
 </div>
+<p><strong>ACC por subperíodo climático (ENSO)</strong></p>
+<p>La figura presenta el desempeño de los modelos en términos de <strong>ACC (Anomaly Correlation Coefficient)</strong> segmentado por fases del fenómeno <strong>ENSO</strong>: <em>El Niño</em>, <em>La Niña</em> y condiciones <em>Neutras</em>. Este análisis permite evaluar cómo cambia la habilidad predictiva según el régimen climático dominante.</p>
+<p><strong>El Niño (2023–2024)</strong></p>
+<ul class="simple">
+<li><p>Desempeño <strong>moderado y relativamente homogéneo</strong> entre modelos.</p></li>
+<li><p><strong>MLP (0.361)</strong> destaca claramente como el mejor en este régimen.</p></li>
+<li><p>Modelos deep learning (<strong>LSTM, CNN-LSTM, BiLSTM</strong>) muestran valores similares (~0.15–0.18), sin gran diferenciación.</p></li>
+<li><p><strong>Ridge y Lasso</strong> presentan menor desempeño, sugiriendo que relaciones lineales capturan menos señal en esta fase.</p></li>
+</ul>
+<p><strong>La Niña (2020–2022)</strong></p>
+<ul class="simple">
+<li><p>Es el régimen con <strong>mejor predictibilidad general</strong>.</p></li>
+<li><p><strong>MLP (0.672)</strong> y <strong>Ridge (0.614)</strong> lideran ampliamente.</p></li>
+<li><p><strong>Lasso (0.527)</strong> también muestra buen desempeño, consolidando la efectividad de modelos lineales en este periodo.</p></li>
+<li><p>Modelos deep learning tienen resultados cercanos a cero o negativos, indicando dificultades para capturar la dinámica dominante.</p></li>
+</ul>
+<p><strong>Neutro (2022–2023)</strong></p>
+<ul class="simple">
+<li><p>Régimen más <strong>difícil y menos predecible</strong>, con ACC negativo en casi todos los modelos.</p></li>
+<li><p><strong>Ridge (-0.040)</strong> y <strong>MLP (-0.062)</strong> son los menos afectados, aunque sin alcanzar habilidad positiva.</p></li>
+<li><p>Modelos deep learning (<strong>CNN-LSTM, BiLSTM, TCN</strong>) presentan caídas más pronunciadas (&lt; -0.25).</p></li>
+<li><p>Esto sugiere una <strong>mayor complejidad o ausencia de señal clara</strong> en condiciones neutras.</p></li>
+</ul>
+<p><strong>Conclusiones clave</strong></p>
+<ul class="simple">
+<li><p>La <strong>habilidad predictiva depende fuertemente del régimen ENSO</strong>, evidenciando no estacionariedad en el sistema.</p></li>
+<li><p><strong>La Niña</strong> ofrece condiciones más favorables para la predicción, especialmente para modelos lineales.</p></li>
+<li><p><strong>El Niño</strong> favorece modelos más flexibles como MLP.</p></li>
+<li><p><strong>Condiciones neutras</strong> representan el mayor desafío para todos los enfoques.</p></li>
+<li><p>No existe un modelo universalmente óptimo, lo que respalda el uso de enfoques adaptativos como <strong>ensembles dependientes del régimen</strong>.</p></li>
+</ul>
+<p>Este análisis refuerza la importancia de incorporar información climática (como ENSO) en el diseño y selección de modelos predictivos.</p>
 </section>
 <section id="tests-estadisticos-las-diferencias-son-significativas">
 <h2>10. Tests estadísticos — ¿las diferencias son significativas?<a class="headerlink" href="#tests-estadisticos-las-diferencias-son-significativas" title="Permalink to this heading">#</a></h2>
