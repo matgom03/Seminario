@@ -592,22 +592,22 @@ X_test     : (60, 44)   → 2021-01-01 — 2025-12-01
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Modelos cargados:
-  Lasso                [sklearn]
   MLP                  [keras]
   Ridge                [sklearn]
-  TCN                  [keras]
+  Lasso                [sklearn]
   CNN-LSTM             [keras]
-  LSTM                 [keras]
   BiLSTM               [keras]
+  TCN                  [keras]
+  LSTM                 [keras]
 
 Verificación de input shapes:
-  Lasso                → sklearn (sklearn)
   MLP                  → (None, 44)
   Ridge                → sklearn (sklearn)
-  TCN                  → (None, 24, 44)
+  Lasso                → sklearn (sklearn)
   CNN-LSTM             → (None, 24, 44)
-  LSTM                 → (None, 24, 44)
   BiLSTM               → (None, 24, 44)
+  TCN                  → (None, 24, 44)
+  LSTM                 → (None, 24, 44)
 </pre></div>
 </div>
 </div>
@@ -731,9 +731,9 @@ Claves disponibles: [&#39;X_test&#39;, &#39;X_train&#39;, &#39;X_val&#39;, &#39;
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2/2 [==============================] - 2s 0s/step
-WARNING:tensorflow:5 out of the last 9 calls to &lt;function Model.make_predict_function.&lt;locals&gt;.predict_function at 0x000002B256E80EE0&gt; triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
-Predicciones listas: {&#39;Persistence&#39;: 60, &#39;Climatología&#39;: 60, &#39;Lasso&#39;: 60, &#39;MLP&#39;: 60, &#39;Ridge&#39;: 60, &#39;TCN&#39;: 60, &#39;CNN-LSTM&#39;: 60, &#39;LSTM&#39;: 60, &#39;BiLSTM&#39;: 60}
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2/2 [==============================] - 1s 10ms/step
+WARNING:tensorflow:5 out of the last 9 calls to &lt;function Model.make_predict_function.&lt;locals&gt;.predict_function at 0x00000296594AF280&gt; triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+Predicciones listas: {&#39;Persistence&#39;: 60, &#39;Climatología&#39;: 60, &#39;MLP&#39;: 60, &#39;Ridge&#39;: 60, &#39;Lasso&#39;: 60, &#39;CNN-LSTM&#39;: 60, &#39;BiLSTM&#39;: 60, &#39;TCN&#39;: 60, &#39;LSTM&#39;: 60}
 </pre></div>
 </div>
 </div>
@@ -876,52 +876,64 @@ Predicciones listas: {&#39;Persistence&#39;: 60, &#39;Climatología&#39;: 60, &#
       <th>2</th>
       <td>LSTM</td>
       <td>DL-Sec.</td>
-      <td>0.3382</td>
-      <td>0.2644</td>
-      <td>0.5639</td>
-      <td>0.7632</td>
-      <td>[0.659, 0.839]</td>
-      <td>0.1038</td>
-      <td>-0.0336</td>
+      <td>0.3481</td>
+      <td>0.2768</td>
+      <td>0.5379</td>
+      <td>0.7553</td>
+      <td>[0.649, 0.834]</td>
+      <td>0.0741</td>
+      <td>0.0131</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>TCN</td>
+      <td>BiLSTM</td>
       <td>DL-Sec.</td>
-      <td>0.3371</td>
-      <td>0.2725</td>
-      <td>0.5667</td>
-      <td>0.7601</td>
-      <td>[0.653, 0.834]</td>
-      <td>0.0921</td>
-      <td>-0.0267</td>
+      <td>0.3441</td>
+      <td>0.2766</td>
+      <td>0.5484</td>
+      <td>0.7529</td>
+      <td>[0.646, 0.830]</td>
+      <td>0.0649</td>
+      <td>0.0015</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>CNN-LSTM</td>
-      <td>DL-Sec.</td>
-      <td>0.3562</td>
-      <td>0.2825</td>
-      <td>0.5163</td>
-      <td>0.7475</td>
-      <td>[0.638, 0.827]</td>
-      <td>0.0446</td>
-      <td>0.0039</td>
+      <td>MLP</td>
+      <td>Tabular</td>
+      <td>0.3830</td>
+      <td>0.2816</td>
+      <td>0.4407</td>
+      <td>0.7433</td>
+      <td>[0.644, 0.829]</td>
+      <td>0.0286</td>
+      <td>-0.1427</td>
     </tr>
     <tr>
       <th>5</th>
-      <td>BiLSTM</td>
+      <td>TCN</td>
       <td>DL-Sec.</td>
-      <td>0.3537</td>
-      <td>0.2818</td>
-      <td>0.5230</td>
-      <td>0.7422</td>
-      <td>[0.626, 0.832]</td>
-      <td>0.0245</td>
-      <td>0.0499</td>
+      <td>0.3514</td>
+      <td>0.2749</td>
+      <td>0.5292</td>
+      <td>0.7420</td>
+      <td>[0.636, 0.822]</td>
+      <td>0.0239</td>
+      <td>-0.0394</td>
     </tr>
     <tr>
       <th>6</th>
+      <td>CNN-LSTM</td>
+      <td>DL-Sec.</td>
+      <td>0.3684</td>
+      <td>0.2927</td>
+      <td>0.4826</td>
+      <td>0.7388</td>
+      <td>[0.624, 0.824]</td>
+      <td>0.0118</td>
+      <td>0.0190</td>
+    </tr>
+    <tr>
+      <th>7</th>
       <td>Persistence</td>
       <td>Baseline</td>
       <td>0.3746</td>
@@ -931,18 +943,6 @@ Predicciones listas: {&#39;Persistence&#39;: 60, &#39;Climatología&#39;: 60, &#
       <td>[0.618, 0.823]</td>
       <td>0.0000</td>
       <td>-0.0168</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>MLP</td>
-      <td>Tabular</td>
-      <td>0.4567</td>
-      <td>0.3375</td>
-      <td>0.2048</td>
-      <td>0.7258</td>
-      <td>[0.622, 0.803]</td>
-      <td>-0.0374</td>
-      <td>-0.2648</td>
     </tr>
     <tr>
       <th>8</th>
@@ -993,12 +993,12 @@ Brecha &gt; 0.15 en ACC → sobreajuste o dependencia del período de test.</p>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>      Modelo  Test-ACC-eval  Brecha Val→Test Confiabilidad  Sesgo (K)
        Ridge         0.7783           0.1033          Alta    -0.1462
        Lasso         0.7695           0.1502         Media    -0.3004
-        LSTM         0.7632           0.2747         Media    -0.0336
-         TCN         0.7601           0.3379          Baja    -0.0267
-    CNN-LSTM         0.7475           0.2896         Media     0.0039
-      BiLSTM         0.7422           0.2967         Media     0.0499
+        LSTM         0.7553           0.3492          Baja     0.0131
+      BiLSTM         0.7529           0.2759         Media     0.0015
+         MLP         0.7433           0.1324          Alta    -0.1427
+         TCN         0.7420           0.2735         Media    -0.0394
+    CNN-LSTM         0.7388           0.2805         Media     0.0190
  Persistence         0.7357           0.2858         Media    -0.0168
-         MLP         0.7258           0.0952          Alta    -0.2648
 Climatología         0.0000           0.0000          Alta    -0.8146
 </pre></div>
 </div>
@@ -1038,7 +1038,7 @@ Climatología         0.0000           0.0000          Alta    -0.8146
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/d71d0cb69c88fbb71a7d6c3bc82eb4bf6b6bba9d13cfddfac3f9e109b9f1cbd2.png" src="_images/d71d0cb69c88fbb71a7d6c3bc82eb4bf6b6bba9d13cfddfac3f9e109b9f1cbd2.png" />
+<img alt="_images/ad3025e1ee8b7a6a9276aa2007fecb3ea8c2453166eb6520362052009dcf89eb.png" src="_images/ad3025e1ee8b7a6a9276aa2007fecb3ea8c2453166eb6520362052009dcf89eb.png" />
 </div>
 </div>
 </section>
@@ -1083,7 +1083,7 @@ Climatología         0.0000           0.0000          Alta    -0.8146
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/03d4031bbc08dba05ffc6b971f368220305e892686ba3e093a9d54cb4d9e8bbe.png" src="_images/03d4031bbc08dba05ffc6b971f368220305e892686ba3e093a9d54cb4d9e8bbe.png" />
+<img alt="_images/3ea4e4493645a5d5380441e3bfbe593b9cb294d4fc5580c6e3d7f0f57b84cabc.png" src="_images/3ea4e4493645a5d5380441e3bfbe593b9cb294d4fc5580c6e3d7f0f57b84cabc.png" />
 </div>
 </div>
 </section>
@@ -1125,7 +1125,7 @@ Climatología         0.0000           0.0000          Alta    -0.8146
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/c7d5b3fcb41fdf15eafde03b39c6494a31c42fd77344c84499a1134efb7e8e50.png" src="_images/c7d5b3fcb41fdf15eafde03b39c6494a31c42fd77344c84499a1134efb7e8e50.png" />
+<img alt="_images/3087db8e2f16985c1dd2bb0a4f7c590cfdd949c77df99afb8ef6238dc7e1033f.png" src="_images/3087db8e2f16985c1dd2bb0a4f7c590cfdd949c77df99afb8ef6238dc7e1033f.png" />
 </div>
 </div>
 </section>
@@ -1198,13 +1198,13 @@ Climatología         0.0000           0.0000          Alta    -0.8146
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ridge           DW=0.517  p_norm=0.001  sesgo=-0.1462K  autocorr ALTA
-LSTM            DW=0.985  p_norm=0.218  sesgo=-0.0336K  autocorr ALTA
-BiLSTM          DW=0.952  p_norm=0.324  sesgo=+0.0499K  autocorr ALTA
-CNN-LSTM        DW=0.906  p_norm=0.109  sesgo=+0.0039K  autocorr ALTA
-TCN             DW=1.132  p_norm=0.420  sesgo=-0.0267K  autocorr ALTA
+LSTM            DW=0.988  p_norm=0.626  sesgo=+0.0131K  autocorr ALTA
+BiLSTM          DW=0.959  p_norm=0.357  sesgo=+0.0015K  autocorr ALTA
+CNN-LSTM        DW=0.845  p_norm=0.165  sesgo=+0.0190K  autocorr ALTA
+TCN             DW=0.958  p_norm=0.049  sesgo=-0.0394K  autocorr ALTA
 </pre></div>
 </div>
-<img alt="_images/2ea1911d55810cc98cc02f3794971e2ee08c2236b8a30e17e6709909ed34d6fa.png" src="_images/2ea1911d55810cc98cc02f3794971e2ee08c2236b8a30e17e6709909ed34d6fa.png" />
+<img alt="_images/8231f49d433667b95813d7339e9d005b2b85f5192ab5f251209dda971b8945da.png" src="_images/8231f49d433667b95813d7339e9d005b2b85f5192ab5f251209dda971b8945da.png" />
 <div class="output text_html"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -1244,38 +1244,38 @@ TCN             DW=1.132  p_norm=0.420  sesgo=-0.0267K  autocorr ALTA
     <tr>
       <th>1</th>
       <td>LSTM</td>
-      <td>0.985</td>
+      <td>0.988</td>
       <td>Alta</td>
-      <td>0.2183</td>
+      <td>0.6260</td>
       <td>Sí</td>
-      <td>-0.0336</td>
+      <td>0.0131</td>
     </tr>
     <tr>
       <th>2</th>
       <td>BiLSTM</td>
-      <td>0.952</td>
+      <td>0.959</td>
       <td>Alta</td>
-      <td>0.3240</td>
+      <td>0.3566</td>
       <td>Sí</td>
-      <td>0.0499</td>
+      <td>0.0015</td>
     </tr>
     <tr>
       <th>3</th>
       <td>CNN-LSTM</td>
-      <td>0.906</td>
+      <td>0.845</td>
       <td>Alta</td>
-      <td>0.1089</td>
+      <td>0.1655</td>
       <td>Sí</td>
-      <td>0.0039</td>
+      <td>0.0190</td>
     </tr>
     <tr>
       <th>4</th>
       <td>TCN</td>
-      <td>1.132</td>
+      <td>0.958</td>
       <td>Alta</td>
-      <td>0.4200</td>
-      <td>Sí</td>
-      <td>-0.0267</td>
+      <td>0.0489</td>
+      <td>No</td>
+      <td>-0.0394</td>
     </tr>
   </tbody>
 </table>
@@ -1324,7 +1324,7 @@ TCN             DW=1.132  p_norm=0.420  sesgo=-0.0267K  autocorr ALTA
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/7353df2c3e07f07a0498bde0b6b05f274abe162540f702d3d10472f6b86d519a.png" src="_images/7353df2c3e07f07a0498bde0b6b05f274abe162540f702d3d10472f6b86d519a.png" />
+<img alt="_images/525074da89ce9e64545105c3d76d7efc7ff2719be0023dab24cd3a02cf21d60d.png" src="_images/525074da89ce9e64545105c3d76d7efc7ff2719be0023dab24cd3a02cf21d60d.png" />
 </div>
 </div>
 </section>
@@ -1395,17 +1395,17 @@ TCN             DW=1.132  p_norm=0.420  sesgo=-0.0267K  autocorr ALTA
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/04b699efdb9fe88af236426f03f3357fc5611b3532aedf6b90387a03b099d891.png" src="_images/04b699efdb9fe88af236426f03f3357fc5611b3532aedf6b90387a03b099d891.png" />
+<img alt="_images/7294a0668efcbfe49c59ae9c308809ecc51eed655b4d299308ec8bb0b90621ea.png" src="_images/7294a0668efcbfe49c59ae9c308809ecc51eed655b4d299308ec8bb0b90621ea.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Período      El Niño (2023–2024)  La Niña (2020–2022)  Neutro (2022–2023)
 Modelo                                                                   
-BiLSTM                     0.207               -0.011              -0.237
-CNN-LSTM                   0.242                0.112              -0.265
-LSTM                       0.252                0.088              -0.256
+BiLSTM                     0.179               -0.018              -0.292
+CNN-LSTM                   0.149               -0.024              -0.276
+LSTM                       0.151                0.011              -0.226
 Lasso                      0.106                0.527              -0.434
-MLP                        0.480                0.714              -0.054
+MLP                        0.361                0.672              -0.062
 Persistence                0.090               -0.082              -0.288
 Ridge                      0.083                0.614              -0.040
-TCN                        0.299                0.084              -0.155
+TCN                        0.194                0.238              -0.309
 </pre></div>
 </div>
 </div>
@@ -1445,14 +1445,14 @@ TCN                        0.299                0.084              -0.155
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Comparación                          t         p   Sig  Mejor
 --------------------------------------------------------------------
-  Ridge vs LSTM                 -0.153    0.8786    ns  → Ridge
-  Ridge vs BiLSTM               -0.701    0.4860    ns  → Ridge
-  Ridge vs CNN-LSTM             -0.750    0.4563    ns  → Ridge
-  Ridge vs TCN                  -0.420    0.6758    ns  → Ridge
+  Ridge vs LSTM                 -0.543    0.5889    ns  → Ridge
+  Ridge vs BiLSTM               -0.610    0.5443    ns  → Ridge
+  Ridge vs CNN-LSTM             -1.059    0.2937    ns  → Ridge
+  Ridge vs TCN                  -0.548    0.5856    ns  → Ridge
   Ridge vs Persistence          -1.122    0.2666    ns  → Ridge
-  LSTM vs BiLSTM                -1.136    0.2605    ns  → LSTM
-  BiLSTM vs CNN-LSTM            -0.045    0.9642    ns  → BiLSTM
-  CNN-LSTM vs TCN               +0.645    0.5213    ns  → TCN
+  LSTM vs BiLSTM                +0.024    0.9808    ns  → BiLSTM
+  BiLSTM vs CNN-LSTM            -1.742    0.0868     *  → BiLSTM
+  CNN-LSTM vs TCN               +1.191    0.2382    ns  → TCN
 
   *** p&lt;0.01   ** p&lt;0.05   * p&lt;0.10   ns = no significativo
 </pre></div>
@@ -1496,7 +1496,7 @@ TCN                        0.299                0.084              -0.155
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a8a0ae82ecfa1d160e4c01aef535cd7717762a1783508345e29f5264dd44d7de.png" src="_images/a8a0ae82ecfa1d160e4c01aef535cd7717762a1783508345e29f5264dd44d7de.png" />
+<img alt="_images/716a21b8e59dc2959fa1e8084628dc2317481964ab44eac360685e015e6b9020.png" src="_images/716a21b8e59dc2959fa1e8084628dc2317481964ab44eac360685e015e6b9020.png" />
 </div>
 </div>
 </section>
@@ -1562,11 +1562,11 @@ TCN                        0.299                0.084              -0.155
 MODELOS CON SKILL OPERACIONAL (ACC&gt;0.6, confiabilidad ≥ Media):
 Ridge              ACC=0.778 [0.683, 0.861]  RMSE=0.361K  Alta DW=0.52
 Lasso              ACC=0.769 [0.668, 0.855]  RMSE=0.468K  Media
-LSTM               ACC=0.763 [0.659, 0.839]  RMSE=0.338K  Media DW=0.99
-CNN-LSTM           ACC=0.748 [0.638, 0.827]  RMSE=0.356K  Media DW=0.91
-BiLSTM             ACC=0.742 [0.626, 0.832]  RMSE=0.354K  Media DW=0.95
+BiLSTM             ACC=0.753 [0.646, 0.830]  RMSE=0.344K  Media DW=0.96
+MLP                ACC=0.743 [0.644, 0.829]  RMSE=0.383K  Alta
+TCN                ACC=0.742 [0.636, 0.822]  RMSE=0.351K  Media DW=0.96
+CNN-LSTM           ACC=0.739 [0.624, 0.824]  RMSE=0.368K  Media DW=0.85
 Persistence        ACC=0.736 [0.618, 0.823]  RMSE=0.375K  Media
-MLP                ACC=0.726 [0.622, 0.803]  RMSE=0.457K  Alta
 
 MODELOS A EXCLUIR:
  Climatología       ACC=0.000

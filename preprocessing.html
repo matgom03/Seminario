@@ -333,7 +333,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -349,6 +351,18 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#carga-de-datos">Carga de datos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#feature-engenieering">Feature engenieering</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#normalizacion-y-splits">Normalizacion y splits</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-time-series-cv-con-gap-implementacion-propia">Block Time Series CV con gap (implementación propia)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#guardado-y-exportacion">Guardado y exportacion</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -371,6 +385,8 @@ document.write(`
 <blockquote>
 <div><p><strong>Solo datos reales ERA5. Resultados válidos como evidencia científica.</strong></p>
 </div></blockquote>
+<section id="carga-de-datos">
+<h2>Carga de datos<a class="headerlink" href="#carga-de-datos" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">pickle</span><span class="o">,</span> <span class="nn">warnings</span><span class="o">,</span> <span class="nn">textwrap</span>
@@ -799,6 +815,9 @@ Rango temporal validado
 <img alt="_images/431ebf584b9ef21191259602f1ea5da0f460a37e65069cf7262c3ddc52aa42be.png" src="_images/431ebf584b9ef21191259602f1ea5da0f460a37e65069cf7262c3ddc52aa42be.png" />
 </div>
 </div>
+</section>
+<section id="feature-engenieering">
+<h2>Feature engenieering<a class="headerlink" href="#feature-engenieering" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Build features con split correcto por fecha del TARGET ────────────────────</span>
@@ -926,6 +945,10 @@ Split por TARGET DATE (input + HORIZON):
 </div>
 </div>
 </div>
+</section>
+<section id="normalizacion-y-splits">
+<h2>Normalizacion y splits<a class="headerlink" href="#normalizacion-y-splits" title="Permalink to this heading">#</a></h2>
+<p>se realiza la normalizacion de los datos utilizando standard scaler para el modelado</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Normalización — fit SOLO sobre train ─────────────────────────────────────</span>
@@ -969,6 +992,35 @@ Split por TARGET DATE (input + HORIZON):
 </div>
 </div>
 </div>
+</section>
+<section id="block-time-series-cv-con-gap-implementacion-propia">
+<h2>Block Time Series CV con gap (implementación propia)<a class="headerlink" href="#block-time-series-cv-con-gap-implementacion-propia" title="Permalink to this heading">#</a></h2>
+<p>Se implementó una estrategia de Block Cross-Validation para series temporales sobre el conjunto de entrenamiento (X_train), utilizando una función personalizada:</p>
+<p>block_timeseries_cv(n_samples, n_splits, gap)
+<strong>Características del esquema</strong></p>
+<ul class="simple">
+<li><p>Bloques secuenciales (sin aleatoriedad)
+Los folds respetan estrictamente el orden temporal.</p></li>
+<li><p><strong>Entrenamiento expansivo (forward chaining)</strong>
+En cada fold, el conjunto de entrenamiento crece progresivamente:</p></li>
+</ul>
+<p>Fold 1: [0 → t1]
+Fold 2: [0 → t2]
+Fold 3: [0 → t3]</p>
+<ul class="simple">
+<li><p>Gap temporal (gap) entre train y validation
+Se introduce una separación explícita para evitar data leakage debido a:</p>
+<ul>
+<li><p>autocorrelación temporal</p></li>
+<li><p>uso de lags</p></li>
+<li><p>horizonte de predicción (target shift)
+Bloques de validación del mismo tamaño base
+Cada fold valida sobre un segmento futuro no solapado.
+Sin overlap garantizado
+Se verifica que train ∩ validation = ∅ en todos los folds.</p></li>
+</ul>
+</li>
+</ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Block CV — sobre samples de TRAIN con target correcto ────────────────────</span>
@@ -1008,6 +1060,10 @@ Split por TARGET DATE (input + HORIZON):
 </div>
 </div>
 </div>
+</section>
+<section id="guardado-y-exportacion">
+<h2>Guardado y exportacion<a class="headerlink" href="#guardado-y-exportacion" title="Permalink to this heading">#</a></h2>
+<p>se guardan los archivos preprocesados para volver a ser utilizados en las otras partes del proyecto</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Guardado de artefactos ────────────────────────────────────────────────────</span>
@@ -1125,6 +1181,7 @@ pipeline_metadata.json
 </div>
 </div>
 </div>
+<p>se exporta el .py que se utilizara en otras partes del preprocesamiento</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Exportar preprocesamiento.py (módulo reutilizable para modeling.ipynb) ────</span>
@@ -1515,6 +1572,7 @@ pipeline_metadata.json
 </div>
 </div>
 </section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -1574,6 +1632,24 @@ pipeline_metadata.json
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#carga-de-datos">Carga de datos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#feature-engenieering">Feature engenieering</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#normalizacion-y-splits">Normalizacion y splits</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#block-time-series-cv-con-gap-implementacion-propia">Block Time Series CV con gap (implementación propia)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#guardado-y-exportacion">Guardado y exportacion</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

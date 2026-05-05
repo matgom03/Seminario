@@ -633,6 +633,7 @@ document.write(`
 </div>
 </div>
 </div>
+<p>podemos observar los ACC y el RMSE que los modelos en el futuro deberan superar</p>
 </section>
 <section id="modelos-tabulares">
 <h2>Modelos tabulares<a class="headerlink" href="#modelos-tabulares" title="Permalink to this heading">#</a></h2>
@@ -709,6 +710,31 @@ document.write(`
 <img alt="_images/b8bc6619656ff2ae04e06734f745d7c910af12e721903cd27d2161d61b1a33fa.png" src="_images/b8bc6619656ff2ae04e06734f745d7c910af12e721903cd27d2161d61b1a33fa.png" />
 </div>
 </div>
+<p><strong>Benchmarks lineales: Ridge vs Lasso</strong></p>
+<p>La figura presenta los resultados del entrenamiento de los modelos de referencia lineales <strong>Ridge</strong> y <strong>Lasso</strong>, utilizados como punto de comparación dentro del pipeline del proyecto.</p>
+<p><strong>Ridge — Distribución de coeficientes por variable y rezago</strong></p>
+<p>El mapa de calor muestra la magnitud absoluta de los coeficientes asignados por Ridge a cada variable en distintos <em>lags</em>. Se observa que:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">roni_lag1</span></code> domina claramente</strong>, con el mayor peso (~0.72), lo que indica una fuerte dependencia temporal inmediata del sistema.</p></li>
+<li><p>Variables como <strong><code class="docutils literal notranslate"><span class="pre">t2m</span></code></strong>, <strong><code class="docutils literal notranslate"><span class="pre">tp</span></code></strong> y <strong><code class="docutils literal notranslate"><span class="pre">sst</span></code></strong> presentan contribuciones moderadas distribuidas en varios rezagos, sugiriendo efectos más difusos en el tiempo.</p></li>
+<li><p>Ridge <strong>no elimina variables</strong>, sino que distribuye el peso entre múltiples features, capturando señales débiles pero potencialmente relevantes.</p></li>
+<li><p>La influencia decrece generalmente a medida que aumenta el lag, lo cual es consistente con la pérdida de memoria temporal.</p></li>
+</ul>
+<p><strong>Lasso — Selección de variables más relevantes</strong></p>
+<p>El gráfico de barras muestra las variables más importantes según Lasso:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">roni_lag1</span></code> y <code class="docutils literal notranslate"><span class="pre">trend_idx</span></code> concentran la mayor importancia</strong>, indicando que el modelo favorece señales fuertes y directas.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">t2m_lag1</span></code></strong> también aparece como predictor relevante, aunque con menor peso.</p></li>
+<li><p>Variables como <strong><code class="docutils literal notranslate"><span class="pre">t2m_roll3</span></code></strong> tienen contribuciones marginales.</p></li>
+<li><p>A diferencia de Ridge, Lasso realiza <strong>selección automática de variables</strong>, eliminando aquellas con menor relevancia (coeficiente = 0).</p></li>
+</ul>
+<p><strong>Comparación e implicaciones</strong></p>
+<ul class="simple">
+<li><p><strong>Ridge</strong>: útil para capturar relaciones distribuidas y evitar perder información, aunque con menor interpretabilidad.</p></li>
+<li><p><strong>Lasso</strong>: favorece modelos más simples y explicables, identificando las variables clave del sistema.</p></li>
+<li><p>Ambos modelos coinciden en la importancia crítica de <strong><code class="docutils literal notranslate"><span class="pre">roni_lag1</span></code></strong>, validando su rol como principal predictor en el problema.</p></li>
+</ul>
+<p>En conjunto, estos benchmarks proporcionan una base sólida para evaluar modelos más complejos (como CNN-LSTM o ensembles), y ayudan a entender la estructura subyacente de las variables predictoras.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── XGBoost (CPU, tree_method=hist) ──────────────────────────────────────────</span>
@@ -823,15 +849,15 @@ document.write(`
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── MLP ──
-    Fold 1... CV-RMSE=0.4485K
-    Fold 2... CV-RMSE=0.2741K
-    Fold 3... CV-RMSE=0.3502K
-    Fold 4... CV-RMSE=0.2873K
-    Fold 5... WARNING:tensorflow:5 out of the last 13 calls to &lt;function Model.make_predict_function.&lt;locals&gt;.predict_function at 0x000001E4536F8790&gt; triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
-CV-RMSE=0.3963K
-    CV-RMSE medio          0.3513K
-WARNING:tensorflow:5 out of the last 13 calls to &lt;function Model.make_predict_function.&lt;locals&gt;.predict_function at 0x000001E5818C2700&gt; triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
-  MLP Val                       RMSE=0.2461K  MAE=0.1852K  R²=0.2855  ACC=0.6306
+    Fold 1... CV-RMSE=0.4148K
+    Fold 2... CV-RMSE=0.2723K
+    Fold 3... CV-RMSE=0.3321K
+    Fold 4... CV-RMSE=0.2726K
+    Fold 5... WARNING:tensorflow:5 out of the last 13 calls to &lt;function Model.make_predict_function.&lt;locals&gt;.predict_function at 0x0000026B734733A0&gt; triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+CV-RMSE=0.4577K
+    CV-RMSE medio          0.3499K
+WARNING:tensorflow:5 out of the last 13 calls to &lt;function Model.make_predict_function.&lt;locals&gt;.predict_function at 0x0000026B7E0F30D0&gt; triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+  MLP Val                       RMSE=0.2624K  MAE=0.2064K  R²=0.1878  ACC=0.6109
 </pre></div>
 </div>
 </div>
@@ -983,13 +1009,13 @@ WARNING:tensorflow:5 out of the last 13 calls to &lt;function Model.make_predict
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── LSTM ──
-    Fold 1... CV-RMSE=0.4068K  ep=92
-    Fold 2... CV-RMSE=0.3893K  ep=40
-    Fold 3... CV-RMSE=0.3875K  ep=42
-    Fold 4... CV-RMSE=0.3172K  ep=21
-    Fold 5... CV-RMSE=0.4472K  ep=24
-    CV-RMSE medio          0.3896K
-  LSTM Val                      RMSE=0.2916K  MAE=0.2334K  R²=-0.0032  ACC=0.4885
+    Fold 1... CV-RMSE=0.3679K  ep=41
+    Fold 2... CV-RMSE=0.3817K  ep=16
+    Fold 3... CV-RMSE=0.3731K  ep=43
+    Fold 4... CV-RMSE=0.3326K  ep=16
+    Fold 5... CV-RMSE=0.4636K  ep=41
+    CV-RMSE medio          0.3838K
+  LSTM Val                      RMSE=0.3090K  MAE=0.2466K  R²=-0.1264  ACC=0.4061
 </pre></div>
 </div>
 </div>
@@ -1047,13 +1073,13 @@ WARNING:tensorflow:5 out of the last 13 calls to &lt;function Model.make_predict
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── BiLSTM ──
-    Fold 1... CV-RMSE=0.3741K  ep=59
-    Fold 2... CV-RMSE=0.3932K  ep=32
-    Fold 3... CV-RMSE=0.3557K  ep=58
-    Fold 4... CV-RMSE=0.2969K  ep=11
-    Fold 5... CV-RMSE=0.4528K  ep=44
-    CV-RMSE medio          0.3745K
-  BiLSTM Val                    RMSE=0.3178K  MAE=0.2535K  R²=-0.1916  ACC=0.4455
+    Fold 1... CV-RMSE=0.4051K  ep=44
+    Fold 2... CV-RMSE=0.3774K  ep=17
+    Fold 3... CV-RMSE=0.3853K  ep=56
+    Fold 4... CV-RMSE=0.3132K  ep=25
+    Fold 5... CV-RMSE=0.4400K  ep=31
+    CV-RMSE medio          0.3842K
+  BiLSTM Val                    RMSE=0.2975K  MAE=0.2460K  R²=-0.0445  ACC=0.4770
 </pre></div>
 </div>
 </div>
@@ -1113,13 +1139,13 @@ WARNING:tensorflow:5 out of the last 13 calls to &lt;function Model.make_predict
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── CNN-LSTM ──
-    Fold 1... CV-RMSE=0.3929K  ep=39
-    Fold 2... CV-RMSE=0.3907K  ep=13
-    Fold 3... CV-RMSE=0.3625K  ep=67
-    Fold 4... CV-RMSE=0.3161K  ep=13
-    Fold 5... CV-RMSE=0.4521K  ep=48
-    CV-RMSE medio          0.3829K
-  CNN-LSTM Val                  RMSE=0.2999K  MAE=0.2401K  R²=-0.0613  ACC=0.4579
+    Fold 1... CV-RMSE=0.3809K  ep=41
+    Fold 2... CV-RMSE=0.3868K  ep=43
+    Fold 3... CV-RMSE=0.3622K  ep=78
+    Fold 4... CV-RMSE=0.3132K  ep=24
+    Fold 5... CV-RMSE=0.4521K  ep=27
+    CV-RMSE medio          0.3790K
+  CNN-LSTM Val                  RMSE=0.3007K  MAE=0.2441K  R²=-0.0667  ACC=0.4583
 </pre></div>
 </div>
 </div>
@@ -1190,13 +1216,13 @@ WARNING:tensorflow:5 out of the last 13 calls to &lt;function Model.make_predict
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── TCN ──
-    Fold 1... CV-RMSE=0.3832K  ep=178
-    Fold 2... CV-RMSE=0.3948K  ep=87
-    Fold 3... CV-RMSE=0.3809K  ep=160
-    Fold 4... CV-RMSE=0.3549K  ep=38
-    Fold 5... CV-RMSE=0.4591K  ep=22
-    CV-RMSE medio          0.3946K
-  TCN Val                       RMSE=0.3135K  MAE=0.2583K  R²=-0.1599  ACC=0.4222
+    Fold 1... CV-RMSE=0.3569K  ep=128
+    Fold 2... CV-RMSE=0.4140K  ep=69
+    Fold 3... CV-RMSE=0.3611K  ep=40
+    Fold 4... CV-RMSE=0.3157K  ep=30
+    Fold 5... CV-RMSE=0.4463K  ep=42
+    CV-RMSE medio          0.3788K
+  TCN Val                       RMSE=0.2964K  MAE=0.2438K  R²=-0.0369  ACC=0.4685
 </pre></div>
 </div>
 </div>
@@ -1237,13 +1263,13 @@ WARNING:tensorflow:5 out of the last 13 calls to &lt;function Model.make_predict
       Modelo       Familia  CV-RMSE (K)  Val-RMSE (K)  Val-ACC
  Persistence      Baseline       0.3134        0.3134   0.4499
      XGBoost       Tabular       0.3319        0.2607   0.5201
-         MLP       Tabular       0.3513        0.2461   0.6306
+         MLP       Tabular       0.3499        0.2624   0.6109
        Ridge       Tabular       0.3558        0.2348   0.6750
        Lasso       Tabular       0.3568        0.2757   0.6193
-      BiLSTM DL-Secuencial       0.3745        0.3178   0.4455
-    CNN-LSTM DL-Secuencial       0.3829        0.2999   0.4579
-        LSTM DL-Secuencial       0.3896        0.2916   0.4885
-         TCN DL-Secuencial       0.3946        0.3135   0.4222
+         TCN DL-Secuencial       0.3788        0.2964   0.4685
+    CNN-LSTM DL-Secuencial       0.3790        0.3007   0.4583
+        LSTM DL-Secuencial       0.3838        0.3090   0.4061
+      BiLSTM DL-Secuencial       0.3842        0.2975   0.4770
 Climatología      Baseline       0.7453        0.7453   0.0000
 =================================================================
 
@@ -1321,11 +1347,11 @@ Climatología      Baseline       0.7453        0.7453   0.0000
   Lasso                TEST     RMSE=0.1866K  MAE=0.1453K  R²=0.1660  ACC=0.7695
   XGBoost              TEST     RMSE=0.2173K  MAE=0.1731K  R²=-0.1311  ACC=0.6762
 2/2 [==============================] - 0s 3ms/step
-  MLP                  TEST     RMSE=0.1822K  MAE=0.1347K  R²=0.2048  ACC=0.7258
-  LSTM                 TEST     RMSE=0.3382K  MAE=0.2644K  R²=0.5639  ACC=0.7632
-  BiLSTM               TEST     RMSE=0.3537K  MAE=0.2818K  R²=0.5230  ACC=0.7422
-  CNN-LSTM             TEST     RMSE=0.3562K  MAE=0.2825K  R²=0.5163  ACC=0.7475
-  TCN                  TEST     RMSE=0.3371K  MAE=0.2725K  R²=0.5667  ACC=0.7601
+  MLP                  TEST     RMSE=0.1528K  MAE=0.1124K  R²=0.4407  ACC=0.7433
+  LSTM                 TEST     RMSE=0.3481K  MAE=0.2768K  R²=0.5379  ACC=0.7553
+  BiLSTM               TEST     RMSE=0.3441K  MAE=0.2766K  R²=0.5484  ACC=0.7529
+  CNN-LSTM             TEST     RMSE=0.3684K  MAE=0.2927K  R²=0.4826  ACC=0.7388
+  TCN                  TEST     RMSE=0.3514K  MAE=0.2749K  R²=0.5292  ACC=0.7420
 
  Evaluación en test completada
 </pre></div>
@@ -1353,11 +1379,11 @@ Climatología      Baseline       0.7453        0.7453   0.0000
         <span class="s2">&quot;Brecha CV→Test&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">][</span><span class="s2">&quot;rmse&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cv_rmse&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">][</span><span class="s2">&quot;rmse&quot;</span><span class="p">]),</span> <span class="mi">4</span><span class="p">),</span>
     <span class="p">})</span>
 
-<span class="n">df_f</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows_f</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;Test-RMSE (K)&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_f</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows_f</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;Test-ACC&quot;</span><span class="p">,</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">df_f</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">MODELS_DIR</span> <span class="o">/</span> <span class="s2">&quot;tabla_resultados.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span><span class="o">*</span><span class="mi">75</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  RESULTADOS FINALES (ordenados por Test-RMSE)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  RESULTADOS FINALES (ordenados por Test-ACC)&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="o">*</span><span class="mi">75</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">df_f</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="o">*</span><span class="mi">75</span><span class="p">)</span>
@@ -1371,19 +1397,19 @@ Climatología      Baseline       0.7453        0.7453   0.0000
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>===========================================================================
-  RESULTADOS FINALES (ordenados por Test-RMSE)
+  RESULTADOS FINALES (ordenados por Test-ACC)
 ===========================================================================
       Modelo  Familia  CV-RMSE (K)  Val-RMSE (K)  Val-ACC  Test-RMSE (K)  Test-MAE (K)  Test-R²  Test-ACC  Brecha CV→Test
        Ridge  Tabular       0.3558        0.2348   0.6750         0.1440        0.1039   0.5032    0.7783         -0.2118
-         MLP  Tabular       0.3513        0.2461   0.6306         0.1822        0.1347   0.2048    0.7258         -0.1690
        Lasso  Tabular       0.3568        0.2757   0.6193         0.1866        0.1453   0.1660    0.7695         -0.1702
-     XGBoost  Tabular       0.3319        0.2607   0.5201         0.2173        0.1731  -0.1311    0.6762         -0.1145
-         TCN  DL-Sec.       0.3946        0.3135   0.4222         0.3371        0.2725   0.5667    0.7601         -0.0575
-        LSTM  DL-Sec.       0.3896        0.2916   0.4885         0.3382        0.2644   0.5639    0.7632         -0.0514
-Climatología Baseline       0.7453        0.7453   0.0000         0.3419        0.2789  -1.7990    0.0000         -0.4034
-      BiLSTM  DL-Sec.       0.3745        0.3178   0.4455         0.3537        0.2818   0.5230    0.7422         -0.0208
-    CNN-LSTM  DL-Sec.       0.3829        0.2999   0.4579         0.3562        0.2825   0.5163    0.7475         -0.0267
+        LSTM  DL-Sec.       0.3838        0.3090   0.4061         0.3481        0.2768   0.5379    0.7553         -0.0357
+      BiLSTM  DL-Sec.       0.3842        0.2975   0.4770         0.3441        0.2766   0.5484    0.7529         -0.0401
+         MLP  Tabular       0.3499        0.2624   0.6109         0.1528        0.1124   0.4407    0.7433         -0.1971
+         TCN  DL-Sec.       0.3788        0.2964   0.4685         0.3514        0.2749   0.5292    0.7420         -0.0274
+    CNN-LSTM  DL-Sec.       0.3790        0.3007   0.4583         0.3684        0.2927   0.4826    0.7388         -0.0107
  Persistence Baseline       0.3134        0.3134   0.4499         0.5223        0.4212  -5.5314    0.7357          0.2089
+     XGBoost  Tabular       0.3319        0.2607   0.5201         0.2173        0.1731  -0.1311    0.6762         -0.1145
+Climatología Baseline       0.7453        0.7453   0.0000         0.3419        0.2789  -1.7990    0.0000         -0.4034
 ===========================================================================
   ACC &gt; 0.6 → skill climático operacional
   Familias: Tabular (lags) vs DL-Sec. (features tabulares en secuencia + target diferencial) — comparación válida,
@@ -1394,6 +1420,7 @@ Climatología Baseline       0.7453        0.7453   0.0000         0.3419       
 </div>
 </div>
 </div>
+<p>Podemos observar que Ridge y Lasso son los modelos con mayor ACC, seguidos de LSTM y BiLSTM, XGBoost fue el unico modelo que no supero a persistence baseline por lo que no lo podemos considerar para mas adelante en la hiperparametrizacion</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Figuras de comparación ─────────────────────────────────────────────────────</span>
@@ -1425,7 +1452,7 @@ Climatología Baseline       0.7453        0.7453   0.0000         0.3419       
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/8e1b699e263b0e290077e31b725006103e43c345ef07130a4e2e8318cf6f62e4.png" src="_images/8e1b699e263b0e290077e31b725006103e43c345ef07130a4e2e8318cf6f62e4.png" />
+<img alt="_images/da216c633053163575c1e039fdad801c4a978d96eb48a225bc8c786cd3dd4b19.png" src="_images/da216c633053163575c1e039fdad801c4a978d96eb48a225bc8c786cd3dd4b19.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1433,7 +1460,7 @@ Climatología Baseline       0.7453        0.7453   0.0000         0.3419       
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Serie temporal: mejor modelo en test ──────────────────────────────────────</span>
 <span class="n">best_test</span> <span class="o">=</span> <span class="n">df_f</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;Modelo&quot;</span><span class="p">]</span>
 
-<span class="k">if</span> <span class="n">best_test</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;LSTM&quot;</span><span class="p">,</span><span class="s2">&quot;StackedLSTM&quot;</span><span class="p">,</span><span class="s2">&quot;BiLSTM&quot;</span><span class="p">,</span><span class="s2">&quot;CNN-LSTM&quot;</span><span class="p">,</span><span class="s2">&quot;TCN&quot;</span><span class="p">]:</span>
+<span class="k">if</span> <span class="n">best_test</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;LSTM&quot;</span><span class="p">,</span><span class="s2">&quot;BiLSTM&quot;</span><span class="p">,</span><span class="s2">&quot;CNN-LSTM&quot;</span><span class="p">,</span><span class="s2">&quot;TCN&quot;</span><span class="p">]:</span>
 
     <span class="c1"># --- predicción diferencial ---</span>
     <span class="n">y_pred_diff</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">best_test</span><span class="p">][</span><span class="s2">&quot;model&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_te_seq</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
@@ -1539,9 +1566,47 @@ Climatología Baseline       0.7453        0.7453   0.0000         0.3419       
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/b1f12bedfbffe49ddf4cff8be730848b186ee3fcacf68572014ba1b47aaa3498.png" src="_images/b1f12bedfbffe49ddf4cff8be730848b186ee3fcacf68572014ba1b47aaa3498.png" />
+<img alt="_images/0a7469c6af75dd6aaab85b18004bdeb0aa923ef7b092f772ae46faa68d6c7392.png" src="_images/0a7469c6af75dd6aaab85b18004bdeb0aa923ef7b092f772ae46faa68d6c7392.png" />
 </div>
 </div>
+<p><strong>Curvas de aprendizaje — Modelos de Deep Learning (último fold CV)</strong></p>
+<p>La figura muestra la evolución de la pérdida (<strong>MSE Loss</strong>) durante el entrenamiento y validación para los modelos <strong>LSTM</strong>, <strong>BiLSTM</strong>, <strong>CNN-LSTM</strong> y <strong>TCN</strong> en el último <em>fold</em> de validación cruzada. Estas curvas permiten evaluar la convergencia, estabilidad y posible sobreajuste de cada arquitectura.</p>
+<p><strong>LSTM</strong></p>
+<ul class="simple">
+<li><p>La pérdida de entrenamiento disminuye de forma sostenida, indicando aprendizaje progresivo.</p></li>
+<li><p>La curva de validación se mantiene relativamente alta y con ligera tendencia descendente.</p></li>
+<li><p>Se observa una <strong>brecha persistente entre train y val</strong>, lo que sugiere <strong>cierto sobreajuste</strong>.</p></li>
+<li><p>La mejora en validación es limitada después de ~20 épocas.</p></li>
+</ul>
+<p><strong>BiLSTM</strong></p>
+<ul class="simple">
+<li><p>Presenta una convergencia más estable que LSTM, con menor varianza en la curva de entrenamiento.</p></li>
+<li><p>La pérdida de validación desciende de forma más consistente.</p></li>
+<li><p>La brecha entre entrenamiento y validación es menor, lo que indica <strong>mejor generalización relativa</strong>.</p></li>
+<li><p>Aun así, el modelo comienza a estabilizarse sin grandes mejoras hacia el final.</p></li>
+</ul>
+<p><strong>CNN-LSTM</strong></p>
+<ul class="simple">
+<li><p>Rápida reducción inicial del error, especialmente en las primeras épocas.</p></li>
+<li><p>La curva de validación sigue una tendencia decreciente y luego se estabiliza.</p></li>
+<li><p>Menor diferencia entre train y val en comparación con LSTM, lo que sugiere <strong>balance adecuado entre capacidad y regularización</strong>.</p></li>
+<li><p>Indica que la combinación de convoluciones y memoria temporal captura patrones relevantes de forma eficiente.</p></li>
+</ul>
+<p><strong>TCN</strong></p>
+<ul class="simple">
+<li><p>Presenta una de las caídas más pronunciadas en entrenamiento al inicio.</p></li>
+<li><p>La validación mejora rápidamente pero luego se estabiliza.</p></li>
+<li><p>Existe una brecha moderada entre train y val, aunque menor que en LSTM.</p></li>
+<li><p>Muestra buen comportamiento en términos de <strong>convergencia rápida</strong>, aunque con ligera tendencia a sobreajuste.</p></li>
+</ul>
+<p><strong>Comparación general</strong></p>
+<ul class="simple">
+<li><p><strong>Convergencia</strong>: CNN-LSTM y TCN destacan por su rapidez inicial.</p></li>
+<li><p><strong>Generalización</strong>: BiLSTM y CNN-LSTM presentan el mejor balance.</p></li>
+<li><p><strong>Sobreajuste</strong>: Más evidente en LSTM; moderado en TCN.</p></li>
+<li><p><strong>Estabilidad</strong>: BiLSTM muestra curvas más suaves y consistentes.</p></li>
+</ul>
+<p>En conjunto, estas curvas evidencian que arquitecturas híbridas como <strong>CNN-LSTM</strong> logran un mejor compromiso entre capacidad de representación y generalización, mientras que modelos más simples como LSTM requieren mayor regularización o ajuste fino para evitar sobreajuste.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Exportación de modelos y metadatos ────────────────────────────────────────</span>
