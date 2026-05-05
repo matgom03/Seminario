@@ -66,6 +66,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script>DOCUMENTATION_OPTIONS.pagename = 'EDA';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="preprocessing.ipynb — ERA5 Caribe/Colombia · Anomalías T2M (1976–2025)" href="preprocessing.html" />
     <link rel="prev" title="Introducción" href="Introduccion.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -160,6 +161,10 @@ const thebe_selector_output = ".output, .cell_output"
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="Introduccion.html">Introducción</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Detección de patrones de anomalías térmicas en el Caribe usando datos ERA5 y análisis estadístico multivariable: Analisis Exploratorio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preprocessing.html"><code class="docutils literal notranslate"><span class="pre">preprocessing.ipynb</span></code> — ERA5 Caribe/Colombia · Anomalías T2M (1976–2025)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modeling.html"><code class="docutils literal notranslate"><span class="pre">modeling.ipynb</span></code> — Forecasting Anomalías T2M · ERA5 Caribe (1976–2025)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation.html"><code class="docutils literal notranslate"><span class="pre">evaluation.ipynb</span></code> — Evaluación post-benchmark ERA5 T2M · Caribe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hiperparametros.html"><code class="docutils literal notranslate"><span class="pre">hpo_v6.ipynb</span></code> — Hiperparametrización ERA5 T2M · Caribe (1976–2025)</a></li>
 </ul>
 
     </div>
@@ -385,6 +390,8 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#correlaciones">Correlaciones</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusiones-del-eda">Conclusiones del EDA</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estructura-espacial-y-representacion-regional">Estructura espacial y representación regional</a></li>
 </ul>
             </nav>
         </div>
@@ -596,7 +603,7 @@ document.write(`
 <h2>Cargado de datos<a class="headerlink" href="#cargado-de-datos" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;era5_caribe_mensual_1976_2025_UNIFICADO.nc&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;C:\Users\Hp\Documents\era5_caribe_mensual_1976_2025_UNIFICADO.nc&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -758,7 +765,7 @@ tp: 0 valores faltantes
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x1ce9052e6a0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x13bb1b539d0&gt;
 </pre></div>
 </div>
 <img alt="_images/ac073e30f5e5f537e1e4e907e58d73e2a8ece8b9a426b9bb8f7cff25db05fcc1.png" src="_images/ac073e30f5e5f537e1e4e907e58d73e2a8ece8b9a426b9bb8f7cff25db05fcc1.png" />
@@ -931,9 +938,7 @@ Valores fuera de rango físico (150K - 350K): 0
 Variable: e
 Min: -0.0003844672755803913
 Max: 7.191924396465765e-06
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Valores extremos (&gt;1 m de agua): 0
+Valores extremos (&gt;1 m de agua): 0
 
 Variable: msl
 Min: 100633.5703125
@@ -1892,7 +1897,7 @@ Aun así, la coincidencia entre tendencias positivas de <strong>t2m y sst</stron
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/c0cbfd3d4eb062249f478be4ac0d6a9515e42a6890c1550a6d6889c132ae38e0.png" src="_images/c0cbfd3d4eb062249f478be4ac0d6a9515e42a6890c1550a6d6889c132ae38e0.png" />
+<img alt="_images/7ce7ad13716369943eb66735ceb52850bbd8d87d5fb5744e3438ef9c2d1e0b7c.png" src="_images/7ce7ad13716369943eb66735ceb52850bbd8d87d5fb5744e3438ef9c2d1e0b7c.png" />
 </div>
 </div>
 <p>Las <strong>Componentes Principales (PCs)</strong> describen la evolución temporal de los patrones espaciales identificados por los EOFs de las anomalías de t2m. Su análisis permite distinguir entre señales dominantes, variabilidad natural y modos secundarios.</p>
@@ -2464,6 +2469,35 @@ Regla: VIF &gt; 10 → multicolinealidad severa | VIF &gt; 5 → moderada
 </ul>
 </section>
 </section>
+<section id="conclusiones-del-eda">
+<h2>Conclusiones del EDA<a class="headerlink" href="#conclusiones-del-eda" title="Permalink to this heading">#</a></h2>
+<p>El análisis exploratorio realizado sobre el dataset ERA5 para la región del Caribe (1976–2025) constituye una caracterización exhaustiva del sistema climático en sus tres dimensiones fundamentales: temporal, espacial y multivariable. Los hallazgos obtenidos no solo describen el estado y la dinámica del sistema, sino que definen de forma directa las decisiones de diseño para la etapa de modelado.</p>
+<hr class="docutils" />
+<p><strong>Calidad e integridad del dataset</strong></p>
+<p>El dataset presenta una integridad estructural sólida. La única excepción relevante son los valores faltantes en <code class="docutils literal notranslate"><span class="pre">sst</span></code>, que son físicamente coherentes dado que esta variable solo está definida sobre superficies oceánicas. La serie temporal es continua, sin saltos ni meses faltantes, con tipos de datos consistentes (<code class="docutils literal notranslate"><span class="pre">float32</span></code>) y coordenadas geográficas válidas. Este punto de partida garantiza que el pipeline de preprocesamiento opera sobre información confiable.</p>
+<hr class="docutils" />
+<p><strong>Señal climática de la variable objetivo</strong></p>
+<p>La temperatura del aire a 2 metros (<code class="docutils literal notranslate"><span class="pre">t2m</span></code>), variable objetivo del proyecto, exhibe la señal más robusta y coherente del dataset. El test de Mann–Kendall confirma una tendencia creciente estadísticamente significativa con una pendiente de Sen de aproximadamente <strong>+0.21 °C por década</strong>, validada tanto en la serie temporal regional como en los mapas celda a celda. El análisis de anomalías revela una transición estructural entre décadas: predominio de anomalías negativas en los años 70 y 80, seguido de un dominio casi absoluto de anomalías positivas a partir del año 2000, con el período 2023–2024 como el más cálido del registro histórico (anomalía &gt; +1.0 °C). Esta señal no es ruido estadístico: es una tendencia climática sostenida y espacialmente coherente sobre el norte de Colombia y el Caribe adyacente.</p>
+<hr class="docutils" />
+<p><strong>Estructura temporal y predictibilidad latente</strong></p>
+<p>El análisis espectral identifica un <strong>ciclo anual dominante (12 meses)</strong> en <code class="docutils literal notranslate"><span class="pre">t2m</span></code> y un componente semi-anual secundario (6 meses), mientras que la ACF muestra una autocorrelación significativa que se extiende más allá de los 12 lags. Las anomalías de <code class="docutils literal notranslate"><span class="pre">sst</span></code> presentan una <strong>mayor persistencia temporal</strong> que las de <code class="docutils literal notranslate"><span class="pre">t2m</span></code>, reflejo de la memoria térmica del océano. Este comportamiento es fundamental: implica que los valores pasados de la temperatura —tanto del aire como del mar— contienen información predictiva real, justificando directamente la construcción de lags como predictores. Los lags seleccionados en el pipeline (1, 2, 3, 6 y 12 meses para <code class="docutils literal notranslate"><span class="pre">sst</span></code> y <code class="docutils literal notranslate"><span class="pre">t2m</span></code>) están alineados con la estructura de autocorrelación observada. El dataset es estacionario en anomalías, condición necesaria para el modelado supervisado.</p>
+</section>
+<hr class="docutils" />
+<section id="estructura-espacial-y-representacion-regional">
+<h2>Estructura espacial y representación regional<a class="headerlink" href="#estructura-espacial-y-representacion-regional" title="Permalink to this heading">#</a></h2>
+<p>El análisis EOF revela que la variabilidad de <code class="docutils literal notranslate"><span class="pre">t2m</span></code> está dominada por <strong>dos modos principales que acumulan el 74% de la varianza total</strong>: un modo de gran escala (EOF1, 64.8%) asociado al calentamiento generalizado, y un modo dipolar (EOF2, 9.4%) que introduce contrastes regionales. Esta compresión de la variabilidad en pocos modos justifica el colapso espacial mediante promedios aritméticos aplicado en el preprocesamiento, sin pérdida crítica de información. La reducción de la dimensión espacial a series temporales es metodológicamente válida dado que el primer modo domina ampliamente. La variabilidad residual de EOF3 y EOF4 puede asociarse a efectos orográficos locales que el promedio espacial suaviza adecuadamente.</p>
+<hr class="docutils" />
+<p><strong>Estructura multivariable y selección de predictores</strong></p>
+<p>El análisis de correlaciones y VIF expone un sistema con <strong>multicolinealidad severa entre varios grupos de variables</strong>. Los pares <code class="docutils literal notranslate"><span class="pre">ssr</span></code>–<code class="docutils literal notranslate"><span class="pre">ssrd</span></code> y <code class="docutils literal notranslate"><span class="pre">slhf</span></code>–<code class="docutils literal notranslate"><span class="pre">e</span></code> presentan correlaciones casi perfectas, representando redundancia informativa pura. Los valores de VIF para variables como <code class="docutils literal notranslate"><span class="pre">e</span></code>, <code class="docutils literal notranslate"><span class="pre">slhf</span></code>, <code class="docutils literal notranslate"><span class="pre">sst</span></code>, <code class="docutils literal notranslate"><span class="pre">msl</span></code> y <code class="docutils literal notranslate"><span class="pre">strd</span></code> son varios órdenes de magnitud superiores a 10, lo que hace inviable su uso simultáneo en modelos lineales. Este diagnóstico llevó a una selección razonada de predictores en el pipeline: de las once variables originales se retienen aquellas con mayor aporte informativo independiente (<code class="docutils literal notranslate"><span class="pre">sst</span></code>, <code class="docutils literal notranslate"><span class="pre">msl</span></code>, <code class="docutils literal notranslate"><span class="pre">u10</span></code>, <code class="docutils literal notranslate"><span class="pre">v10</span></code>, <code class="docutils literal notranslate"><span class="pre">tp</span></code>, <code class="docutils literal notranslate"><span class="pre">ssr</span></code>, <code class="docutils literal notranslate"><span class="pre">strd</span></code>, <code class="docutils literal notranslate"><span class="pre">slhf</span></code>), eliminando las redundantes (<code class="docutils literal notranslate"><span class="pre">ssrd</span></code>, <code class="docutils literal notranslate"><span class="pre">e</span></code>). La incorporación del índice RONI como predictor externo complementa este conjunto con una señal de teleconexión oceánica (ENSO) no capturada directamente por las variables ERA5.</p>
+<hr class="docutils" />
+<p><strong>Consideraciones sobre distribuciones y no linealidades</strong></p>
+<p>La mayoría de las variables no cumplen el supuesto de normalidad según los tests de Shapiro–Wilk y D’Agostino–Pearson, con la excepción de <code class="docutils literal notranslate"><span class="pre">sst</span></code>. La precipitación (<code class="docutils literal notranslate"><span class="pre">tp</span></code>) presenta la distribución más asimétrica e irregular, con alta variabilidad intra-anual y un espectro de potencia disperso que contrasta con el ciclo anual bien definido de las variables térmicas. Estas características señalan que el sistema climático analizado es intrínsecamente no lineal, con interacciones complejas entre el balance energético, la dinámica atmosférica y la variabilidad del océano.</p>
+<hr class="docutils" />
+<p><strong>Puente hacia el modelado</strong></p>
+<p>El conjunto de hallazgos anteriores configura un escenario favorable pero exigente para el modelado predictivo. La señal climática es real y extraíble, la estructura temporal tiene memoria aprovechable, y el espacio de predictores ha sido depurado con criterio físico y estadístico. Sin embargo, la multicolinealidad residual, la no-normalidad generalizada y la naturaleza no lineal de las interacciones entre variables desaconsejan confiar en modelos lineales clásicos como única solución.</p>
+<p>El paso natural es transitar hacia modelos capaces de capturar relaciones no lineales y dependencias temporales complejas. En el frente de <strong>Machine Learning</strong>, algoritmos basados en ensambles como <em>Random Forest</em> y <em>Gradient Boosting</em> (XGBoost, LightGBM) ofrecen robustez ante multicolinealidad y distribuciones no normales, siendo candidatos sólidos para una línea base de alto rendimiento. En el frente de <strong>Deep Learning</strong>, la estructura temporal del problema —series mensuales con memoria de hasta 12 meses y un horizonte de predicción de 3 meses— es naturalmente compatible con arquitecturas recurrentes como LSTM y GRU, así como con bloques de atención temporal.</p>
+<p>La disponibilidad de un target diferencial (<code class="docutils literal notranslate"><span class="pre">t2m_diff_target</span></code>) en el pipeline, además del target absoluto, abre la posibilidad de formular el problema como predicción de <em>cambio</em> en lugar de valor absoluto, estrategia que puede reducir el sesgo hacia la media y mejorar la sensibilidad del modelo ante eventos de anomalía extrema. Finalmente, el diseño de validación cruzada por bloques temporales (5 folds con gap de 12 meses) garantiza que la evaluación de modelos respete la estructura temporal de los datos y no sobreestime el rendimiento por contaminación futura, condición indispensable en series climáticas con alta autocorrelación.</p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -2505,6 +2539,15 @@ Regla: VIF &gt; 10 → multicolinealidad severa | VIF &gt; 5 → moderada
         <p class="prev-next-subtitle">previous</p>
         <p class="prev-next-title">Introducción</p>
       </div>
+    </a>
+    <a class="right-next"
+       href="preprocessing.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><code class="docutils literal notranslate"><span class="pre">preprocessing.ipynb</span></code> — ERA5 Caribe/Colombia · Anomalías T2M (1976–2025)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div></div>
   
@@ -2556,6 +2599,8 @@ Regla: VIF &gt; 10 → multicolinealidad severa | VIF &gt; 5 → moderada
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#correlaciones">Correlaciones</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusiones-del-eda">Conclusiones del EDA</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estructura-espacial-y-representacion-regional">Estructura espacial y representación regional</a></li>
 </ul>
   </nav></div>
 
