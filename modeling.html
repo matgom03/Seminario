@@ -1571,43 +1571,70 @@ Climatología Baseline       0.7453        0.7453   0.0000         0.3419       
 </div>
 </div>
 <p><strong>Curvas de aprendizaje — Modelos de Deep Learning (último fold CV)</strong></p>
-<p>La figura muestra la evolución de la pérdida (<strong>MSE Loss</strong>) durante el entrenamiento y validación para los modelos <strong>LSTM</strong>, <strong>BiLSTM</strong>, <strong>CNN-LSTM</strong> y <strong>TCN</strong> en el último <em>fold</em> de validación cruzada. Estas curvas permiten evaluar la convergencia, estabilidad y posible sobreajuste de cada arquitectura.</p>
+<p>La figura muestra la evolución de la pérdida (<strong>MSE Loss</strong>) durante el entrenamiento
+y validación para los modelos <strong>LSTM</strong>, <strong>BiLSTM</strong>, <strong>CNN-LSTM</strong> y <strong>TCN</strong> en el
+último <em>fold</em> de validación cruzada. Estas curvas permiten evaluar convergencia,
+estabilidad y capacidad de generalización de cada arquitectura.</p>
+<p><strong>Lectura del contexto</strong></p>
+<p>La brecha persistente entre train y val es en parte <strong>estructural</strong>: el último fold
+de validación dispone de ~33 secuencias en un período (2016–2020) climáticamente
+desordenado, lo que eleva la val-loss independientemente de la arquitectura. La
+regularización aplicada (L2=1e-4, Dropout 0.4) evita que el train-loss colapse a
+cero, señal de que el esquema de regularización está actuando correctamente.</p>
 <p><strong>LSTM</strong></p>
 <ul class="simple">
-<li><p>La pérdida de entrenamiento disminuye de forma sostenida, indicando aprendizaje progresivo.</p></li>
-<li><p>La curva de validación se mantiene relativamente alta y con ligera tendencia descendente.</p></li>
-<li><p>Se observa una <strong>brecha persistente entre train y val</strong>, lo que sugiere <strong>cierto sobreajuste</strong>.</p></li>
-<li><p>La mejora en validación es limitada después de ~20 épocas.</p></li>
+<li><p>La pérdida de entrenamiento disminuye de forma sostenida hasta estabilizarse
+en torno a 0.85 MSE.</p></li>
+<li><p>La curva de validación se mantiene alta (~1.35–1.40) con tendencia levemente
+descendente pero sin convergencia clara.</p></li>
+<li><p>La brecha train-val es la más amplia del grupo, reflejo tanto de la
+regularización insuficiente para el tamaño de secuencias disponibles como de
+la dificultad del período de validación.</p></li>
 </ul>
 <p><strong>BiLSTM</strong></p>
 <ul class="simple">
-<li><p>Presenta una convergencia más estable que LSTM, con menor varianza en la curva de entrenamiento.</p></li>
-<li><p>La pérdida de validación desciende de forma más consistente.</p></li>
-<li><p>La brecha entre entrenamiento y validación es menor, lo que indica <strong>mejor generalización relativa</strong>.</p></li>
-<li><p>Aun así, el modelo comienza a estabilizarse sin grandes mejoras hacia el final.</p></li>
+<li><p>Presenta la curva de entrenamiento <strong>más inestable</strong>, con oscilaciones marcadas
+en las primeras 15 épocas, consistente con su mayor número de parámetros
+respecto a LSTM con el mismo volumen de datos.</p></li>
+<li><p>La pérdida de validación se estabiliza en ~1.20–1.25, ligeramente inferior a
+LSTM pero sin tendencia descendente sostenida.</p></li>
+<li><p>La brecha train-val es comparable a LSTM; la aparente ventaja no se traduce en
+mejor generalización en test (Test-ACC=0.742, el más bajo del grupo DL).</p></li>
 </ul>
 <p><strong>CNN-LSTM</strong></p>
 <ul class="simple">
-<li><p>Rápida reducción inicial del error, especialmente en las primeras épocas.</p></li>
-<li><p>La curva de validación sigue una tendencia decreciente y luego se estabiliza.</p></li>
-<li><p>Menor diferencia entre train y val en comparación con LSTM, lo que sugiere <strong>balance adecuado entre capacidad y regularización</strong>.</p></li>
-<li><p>Indica que la combinación de convoluciones y memoria temporal captura patrones relevantes de forma eficiente.</p></li>
+<li><p>Muestra una reducción inicial rápida del error de entrenamiento, favorecida por
+las capas convolucionales causales que extraen patrones locales antes de la
+memoria recurrente.</p></li>
+<li><p>La curva de validación sigue una tendencia decreciente antes de estabilizarse,
+con una brecha train-val similar a LSTM.</p></li>
 </ul>
 <p><strong>TCN</strong></p>
 <ul class="simple">
-<li><p>Presenta una de las caídas más pronunciadas en entrenamiento al inicio.</p></li>
-<li><p>La validación mejora rápidamente pero luego se estabiliza.</p></li>
-<li><p>Existe una brecha moderada entre train y val, aunque menor que en LSTM.</p></li>
-<li><p>Muestra buen comportamiento en términos de <strong>convergencia rápida</strong>, aunque con ligera tendencia a sobreajuste.</p></li>
+<li><p>Presenta la caída de entrenamiento más pronunciada en las primeras épocas
+(~1.65 → 0.90), atribuible a la dilatación exponencial que amplía el campo
+receptivo rápidamente.</p></li>
+<li><p>La validación mejora en los primeros ~15 épocas y luego se estabiliza en torno
+a 1.25.</p></li>
+<li><p>El <code class="docutils literal notranslate"><span class="pre">clipnorm=1.0</span></code> modera el ritmo de convergencia inicial pero contribuye a la
+estabilidad posterior.</p></li>
 </ul>
 <p><strong>Comparación general</strong></p>
 <ul class="simple">
-<li><p><strong>Convergencia</strong>: CNN-LSTM y TCN destacan por su rapidez inicial.</p></li>
-<li><p><strong>Generalización</strong>: BiLSTM y CNN-LSTM presentan el mejor balance.</p></li>
-<li><p><strong>Sobreajuste</strong>: Más evidente en LSTM; moderado en TCN.</p></li>
-<li><p><strong>Estabilidad</strong>: BiLSTM muestra curvas más suaves y consistentes.</p></li>
+<li><p><strong>Velocidad de convergencia</strong>: TCN y CNN-LSTM reducen el train-loss más rápido
+en las primeras épocas.</p></li>
+<li><p><strong>Estabilidad</strong>: LSTM y CNN-LSTM muestran curvas de entrenamiento más suaves;
+BiLSTM es el más ruidoso.</p></li>
+<li><p><strong>Brecha train-val</strong>: amplia y persistente en todos los modelos, condicionada
+principalmente por el tamaño reducido del fold de validación y la dificultad
+del período 2016–2020, no exclusivamente por sobreajuste.</p></li>
+<li><p><strong>Correlación con resultados finales</strong>: CNN-LSTM es la arquitectura que mejor
+traslada su comportamiento en entrenamiento a rendimiento en test.</p></li>
 </ul>
-<p>En conjunto, estas curvas evidencian que arquitecturas híbridas como <strong>CNN-LSTM</strong> logran un mejor compromiso entre capacidad de representación y generalización, mientras que modelos más simples como LSTM requieren mayor regularización o ajuste fino para evitar sobreajuste.</p>
+<p>En conjunto, las curvas reflejan el comportamiento esperado para modelos DL
+entrenados con datasets pequeños (~438 secuencias). La arquitectura <strong>CNN-LSTM</strong>
+emerge como la más adecuada para este problema, con convergencia estable y el
+mejor rendimiento operacional verificado en test.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Exportación de modelos y metadatos ────────────────────────────────────────</span>
